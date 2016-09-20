@@ -63,10 +63,14 @@ public class Lobby implements Listener {
 	  public void onSignCreate(SignChangeEvent e)
 	  {
 	    Player p = e.getPlayer();
-	    if (e.getLine(0).equalsIgnoreCase("[KoaSign]"))
-	    {
-	      e.setLine(0, "[KoaSign]");
-	      p.sendMessage("Il Cartello e' stato creato con successo");
+	    if (e.getLine(0).equalsIgnoreCase("[Dedalo]")) {
+	    	if (e.getLine(0).equalsIgnoreCase("lobby")) {
+	    		
+	    	}
+	      e.setLine(0, "§1§l[Dedalo]");
+	      e.setLine(2, "§2§lJoin");
+	    //e.setLine(3, Player dentro + "/" + MAX_LOBBY);
+	      
 	    }
 	  }
 }
