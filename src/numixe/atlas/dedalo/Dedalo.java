@@ -10,6 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 public class Dedalo extends JavaPlugin implements Listener {
+	
+	public static Game game = new Game(new Lobby());
 
 	public void onEnable() {
 		
