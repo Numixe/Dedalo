@@ -62,11 +62,15 @@ public class WoolEvents implements Listener {
 			
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(0, new DPlayer(p));
+			else
+				p.sendMessage("§9Sei già in un team");
 		}
 		else if (event.getCurrentItem().equals(blueWool)) {
 			
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(1, new DPlayer(p));
+			else
+				p.sendMessage("§9Sei già in un team");
 		}
 		
 		if (game.lobby.isFull()) {
