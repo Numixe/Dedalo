@@ -35,7 +35,7 @@ public class WoolEvents implements Listener {
 			
 		    Sign sign = (Sign) block.getState();
 		    
-		    if (sign.getLine(0).equalsIgnoreCase("§1§l[Dedalo]")) { // i nomi possono essere anche presi dal config
+		    if (sign.getLine(0).equalsIgnoreCase("Â§1Â§l[Dedalo]")) { // i nomi possono essere anche presi dal config
 		    	
 		    	game.lobby.chooseTeam(p);
 		    }
@@ -45,7 +45,7 @@ public class WoolEvents implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		
-		if (!event.getInventory().getName().equalsIgnoreCase("§9§lTeam Chooser"))
+		if (!event.getInventory().getName().equalsIgnoreCase("Â§9Â§lTeam Chooser"))
 			return;
 		event.setCancelled(true);
 		Player p = (Player) event.getWhoClicked();
@@ -66,6 +66,9 @@ public class WoolEvents implements Listener {
 			
 			game.start();
 		}
+		
+		p.closeInventory();
+		p.sendMessage("FUNZIONA :D");
 	}
 	
 	public static final ItemStack genWool(String name) {
@@ -77,7 +80,7 @@ public class WoolEvents implements Listener {
 			Wool wool = new Wool(DyeColor.RED);
 			out = wool.toItemStack(1);
 			ItemMeta meta = out.getItemMeta();
-			meta.setDisplayName("§c§lRed");
+			meta.setDisplayName("Â§cÂ§lRed");
 			out.setItemMeta(meta);
 			
 			return out;
@@ -87,7 +90,7 @@ public class WoolEvents implements Listener {
 			Wool wool = new Wool(DyeColor.BLUE);
 			out = wool.toItemStack(1);
 			ItemMeta meta = out.getItemMeta();
-			meta.setDisplayName("§9§lBlue");
+			meta.setDisplayName("Â§9Â§lBlue");
 			out.setItemMeta(meta);
 			
 			return out;
