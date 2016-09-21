@@ -53,7 +53,7 @@ public class Lobby implements Listener {
 	}
 	
 	@EventHandler
-	  public void onSignCreate(SignChangeEvent e)	// a che serve?
+	  public void onSignCreate(SignChangeEvent e)	// a che serve? RISPOSTA: Quando crei un cartello con Scritto [Dedalo] e sotto lobby esce il cartello speciale dell'evento
 	  {
 	    Player p = e.getPlayer();
 	    if (e.getLine(0).equalsIgnoreCase("[Dedalo]")) {
