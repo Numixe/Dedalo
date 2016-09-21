@@ -26,7 +26,7 @@ public class Lobby {
 	
 	public void chooseTeam(Player p) {
 		
-		Inventory inv = Bukkit.createInventory(null, 9, "§9§lTeam Chooser");
+		Inventory inv = Bukkit.createInventory(null, 9, "Â§9Â§lTeam Chooser");
 		
 		inv.setItem(0, WoolEvents.redWool);
 		inv.setItem(1, WoolEvents.blueWool);
@@ -47,6 +47,20 @@ public class Lobby {
 			
 				if (p.player.equals(pl))
 					return t;
+			}
+		}
+		
+		return null;
+	}
+	
+	public DPlayer getPlayer(Player pl) {
+		
+		for (Team t : teams) {
+			
+			for (DPlayer p : t.players) {
+				
+				if (p.player.equals(pl))
+					return p;
 			}
 		}
 		

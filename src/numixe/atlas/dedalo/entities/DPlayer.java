@@ -13,4 +13,9 @@ public class DPlayer {
 		kills = 0;
 		deaths = 0;
 	}
+	
+	public String getName() {
+		
+		return player.getName();
+	}
 }
