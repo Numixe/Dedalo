@@ -17,7 +17,7 @@ public class Team {
 	
 	public void addPlayer(DPlayer p) {
 		
-		if (players.size() >= MAX_PLAYERS || players.contains(p))
+		if (players.size() >= MAX_PLAYERS)
 			return;
 		
 		players.add(p);

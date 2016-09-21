@@ -58,10 +58,16 @@ public class WoolEvents implements Listener {
 			return;
 		}
 		
-		if (event.getCurrentItem().equals(redWool))
-			game.lobby.addToTeam(0, new DPlayer(p));
-		else if (event.getCurrentItem().equals(blueWool))
-			game.lobby.addToTeam(1, new DPlayer(p));
+		if (event.getCurrentItem().equals(redWool)) {
+			
+			if (game.lobby.ownedBy(p) == null)
+				game.lobby.addToTeam(0, new DPlayer(p));
+		}
+		else if (event.getCurrentItem().equals(blueWool)) {
+			
+			if (game.lobby.ownedBy(p) == null)
+				game.lobby.addToTeam(1, new DPlayer(p));
+		}
 		
 		if (game.lobby.isFull()) {
 			
