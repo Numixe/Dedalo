@@ -2,3 +2,10 @@ name: Dedalo
 version: BETA
 author: Atlas & Numixe
 main: numixe.atlas.dedalo.Dedalo
+commands:
+    startgame:
+        description: 'Starts the game'
+    finishgame:
+        description: 'Terminates the game'
+    timerstartgame:
+        description: 'Starts the game with the timer'

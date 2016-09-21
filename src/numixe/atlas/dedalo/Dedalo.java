@@ -31,27 +31,30 @@ public class Dedalo extends JavaPlugin {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		
+		// players and console access commands
+		
 		if (cmd.getName().equalsIgnoreCase("startgame")) {
 			
 			game.start();
-			return true;
 			
 		} else if (cmd.getName().equalsIgnoreCase("finishgame")) {
 			
 			game.finish();
-			return true;
+			
+		} else {
+			
+			if (!(sender instanceof Player)) {
+				
+				sender.sendMessage("You are not a Player");
+				return false;
+			}
 		}
 		
-		if (!(sender instanceof Player)) {
-			
-			sender.sendMessage("You are not a Player");
-			return false;
-		}
+		// players only access commands
 		
 		if (cmd.getName().equalsIgnoreCase("timerstartgame")) {
 			
-			Timer timer = new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
-			timer.start();
+			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 	    	
 		return true;

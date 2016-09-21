@@ -75,8 +75,7 @@ public class WoolEvents implements Listener {
 		
 		if (game.lobby.isFull()) {
 			
-			Timer timer = new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
-			timer.start();
+			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 		
 		p.closeInventory();
