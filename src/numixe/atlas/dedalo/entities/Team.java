@@ -22,6 +22,18 @@ public class Team {
 		
 		players.add(p);
 		
-		p.player.sendMessage("Sei stato aggiunto a " + name + "!!");
+		String color = "";
+		
+		if (name.equalsIgnoreCase("red"))
+			color = "§c";
+		else if (name.equalsIgnoreCase("blue"))
+			color = "§9";
+		
+		p.player.sendMessage("§9Dedalo> §7Sei stato aggiunto al Team " + color + name + "!");
+	}
+	
+	public int size() {
+		
+		return players.size();
 	}
 }

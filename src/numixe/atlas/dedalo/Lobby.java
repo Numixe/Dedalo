@@ -2,18 +2,14 @@ package numixe.atlas.dedalo;
 
 import numixe.atlas.dedalo.entities.DPlayer;
 import numixe.atlas.dedalo.entities.Team;
+import numixe.atlas.dedalo.listeners.WoolEvents;
 
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 
-public class Lobby implements Listener {
-
+public class Lobby {
+	
 	public Team[] teams;
 	
 	public Lobby() {
@@ -28,42 +24,32 @@ public class Lobby implements Listener {
 		teams[team_index].addPlayer(p);
 	}
 	
-	@EventHandler
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void chooseTeam(Player p) {
 		
-		if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK))
-			return;
+		Inventory inv = Bukkit.createInventory(null, 9, "�9�lTeam Chooser");
 		
-		Player p = event.getPlayer();
-		Block block = event.getClickedBlock();
+		inv.setItem(0, WoolEvents.redWool);
+		inv.setItem(1, WoolEvents.blueWool);
 		
-		if (block.getState() instanceof Sign) {
-			
-		    Sign sign = (Sign) block.getState();
-		    
-		    if (sign.getLine(0).equalsIgnoreCase("Red")) { // i nomi possono essere anche presi dal config
-		    	
-		    	addToTeam(0, new DPlayer(p));
-		        
-		    } else if (sign.getLine(0).equalsIgnoreCase("Blue")) {
-		    	
-		    	addToTeam(1, new DPlayer(p));
-		    }
-		}
+		p.openInventory(inv);
+	}
+
+	public boolean isFull() {
+		
+		return teams[0].size() == Team.MAX_PLAYERS && teams[1].size() == Team.MAX_PLAYERS;
 	}
 	
-	@EventHandler
-	  public void onSignCreate(SignChangeEvent e)	// a che serve? RISPOSTA: Quando crei un cartello con Scritto [Dedalo] e sotto lobby esce il cartello speciale dell'evento
-	  {
-	    Player p = e.getPlayer();
-	    if (e.getLine(0).equalsIgnoreCase("[Dedalo]")) {
-	    	if (e.getLine(0).equalsIgnoreCase("lobby")) {
-	    		
-	    	}
-	      e.setLine(0, "§1§l[Dedalo]");
-	      e.setLine(2, "§2§lJoin");
-	    //e.setLine(3, Player dentro + "/" + MAX_LOBBY);
-	      
-	    }
-	  }
+	public Team ownedBy(Player pl) {
+		
+		for (Team t : teams) {
+		
+			for (DPlayer p : teams[0].players) {
+			
+				if (p.player.equals(pl))
+					return t;
+			}
+		}
+		
+		return null;
+	}
 }

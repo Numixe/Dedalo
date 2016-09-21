@@ -1,8 +1,6 @@
 package numixe.atlas.dedalo;
 
-import org.bukkit.event.Listener;
-
-public class Game implements Listener {
+public class Game {
 	
 	public Lobby lobby;
 	private boolean running;

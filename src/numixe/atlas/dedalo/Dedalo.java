@@ -3,14 +3,13 @@ package numixe.atlas.dedalo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import numixe.atlas.dedalo.listeners.OtherEvents;
+import numixe.atlas.dedalo.listeners.WoolEvents;
 
-public class Dedalo extends JavaPlugin implements Listener {
+
+public class Dedalo extends JavaPlugin {
 	
 	public static Game game = new Game(new Lobby());
 	public static Dedalo plugin = null;
@@ -18,9 +17,8 @@ public class Dedalo extends JavaPlugin implements Listener {
 	public void onEnable() {
 		
 		plugin = this;
-		Bukkit.getServer().getPluginManager().registerEvents(this, this);
-        Bukkit.getServer().getPluginManager().registerEvents(game, this);
-        Bukkit.getServer().getPluginManager().registerEvents(game.lobby, this);
+        Bukkit.getServer().getPluginManager().registerEvents(new WoolEvents(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new OtherEvents(), this);
 	}
 	
 	public void onDisable() {
@@ -33,16 +31,4 @@ public class Dedalo extends JavaPlugin implements Listener {
 	    	
 		return true;
 	}
-	
-	@EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-         
-    	
-    }
-       
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent e) {
-        	
-    	
-    }
 }
