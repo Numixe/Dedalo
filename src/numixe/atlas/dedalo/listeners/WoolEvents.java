@@ -35,8 +35,7 @@ public class WoolEvents implements Listener {
 			
 		    Sign sign = (Sign) block.getState();
 		    
-		    if (sign.getLine(0).equalsIgnoreCase("§1§l[Dedalo]") 
-		    		&& sign.getLine(1).equalsIgnoreCase("§2§lJoin")) { // i nomi possono essere anche presi dal config
+		    if (sign.getLine(0).equalsIgnoreCase("§1§l[Dedalo]")) { // i nomi possono essere anche presi dal config
 		    	
 		    	game.lobby.chooseTeam(p);
 		    }

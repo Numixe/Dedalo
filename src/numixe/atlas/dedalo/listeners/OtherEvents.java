@@ -28,6 +28,7 @@ public class OtherEvents implements Listener {
 	    		
 	    	}
 	      e.setLine(0, "§1§l[Dedalo]");
+	      e.setLine(1, "");
 	      e.setLine(2, "§2§lJoin");
 	    //e.setLine(3, Player dentro + "/" + MAX_LOBBY);
 	    
