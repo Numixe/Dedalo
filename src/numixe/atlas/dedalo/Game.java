@@ -13,6 +13,7 @@ public class Game {
 	
 	public void start() {
 		
+		// configure start event
 		running = true;
 	}
 	
@@ -23,6 +24,7 @@ public class Game {
 	
 	public void finish() {
 		
+		// configure finish event
 		running = false;
 	}
 }

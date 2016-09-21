@@ -47,6 +47,7 @@ public class WoolEvents implements Listener {
 		
 		if (!event.getInventory().getName().equalsIgnoreCase("§9§lTeam Chooser"))
 			return;
+		
 		event.setCancelled(true);
 		Player p = (Player) event.getWhoClicked();
 		
@@ -57,9 +58,9 @@ public class WoolEvents implements Listener {
 			return;
 		}
 		
-		if (p.getType().equals(redWool))
+		if (event.getCurrentItem().equals(redWool))
 			game.lobby.addToTeam(0, new DPlayer(p));
-		else if (p.getType().equals(blueWool))
+		else if (event.getCurrentItem().equals(blueWool))
 			game.lobby.addToTeam(1, new DPlayer(p));
 		
 		if (game.lobby.isFull()) {
@@ -68,34 +69,31 @@ public class WoolEvents implements Listener {
 		}
 		
 		p.closeInventory();
-		p.sendMessage("FUNZIONA :D");
 	}
 	
 	public static final ItemStack genWool(String name) {
 		
-		ItemStack out;
+		ItemStack out = null;
+		String display_name = null;
+		DyeColor color = null; 
 		
 		if (name.equalsIgnoreCase("red")) {
 			
-			Wool wool = new Wool(DyeColor.RED);
-			out = wool.toItemStack(1);
-			ItemMeta meta = out.getItemMeta();
-			meta.setDisplayName("§c§lRed");
-			out.setItemMeta(meta);
-			
-			return out;
+			color = DyeColor.RED;
+			display_name = "§c§lRed";
 			
 		} else if (name.equalsIgnoreCase("blue")) {
 			
-			Wool wool = new Wool(DyeColor.BLUE);
-			out = wool.toItemStack(1);
-			ItemMeta meta = out.getItemMeta();
-			meta.setDisplayName("§9§lBlue");
-			out.setItemMeta(meta);
-			
-			return out;
+			color = DyeColor.BLUE;
+			display_name = "§9§lBlue";
 		}
 		
-		return null;
+		Wool wool = new Wool(color);
+		out = wool.toItemStack(1);
+		ItemMeta meta = out.getItemMeta();
+		meta.setDisplayName(display_name);
+		out.setItemMeta(meta);
+		
+		return out;
 	}
 }

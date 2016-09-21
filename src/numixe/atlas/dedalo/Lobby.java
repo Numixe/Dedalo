@@ -26,7 +26,7 @@ public class Lobby {
 	
 	public void chooseTeam(Player p) {
 		
-		Inventory inv = Bukkit.createInventory(null, 9, "§9§lTeam Chooser");
+		Inventory inv = Bukkit.createInventory(null, 9, "Â§9Â§lTeam Chooser");
 		
 		inv.setItem(0, WoolEvents.redWool);
 		inv.setItem(1, WoolEvents.blueWool);

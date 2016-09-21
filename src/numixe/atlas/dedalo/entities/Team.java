@@ -25,11 +25,11 @@ public class Team {
 		String color = "";
 		
 		if (name.equalsIgnoreCase("red"))
-			color = "งc";
+			color = "ยงc";
 		else if (name.equalsIgnoreCase("blue"))
-			color = "ง9";
+			color = "ยง9";
 		
-		p.player.sendMessage("ง9Dedalo> ง7Sei stato aggiunto al Team " + color + name + "!");
+		p.player.sendMessage("ยง9Dedalo> ยง7Sei stato aggiunto al Team " + color + name + "!");
 	}
 	
 	public int size() {
