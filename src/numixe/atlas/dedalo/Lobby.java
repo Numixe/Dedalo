@@ -43,7 +43,7 @@ public class Lobby {
 		
 		for (Team t : teams) {
 		
-			for (DPlayer p : teams[0].players) {
+			for (DPlayer p : t.players) {
 			
 				if (p.player.equals(pl))
 					return t;
