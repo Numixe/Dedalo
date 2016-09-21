@@ -1,9 +1,11 @@
 package numixe.atlas.dedalo;
 
-public class Game {
+import org.bukkit.event.Listener;
+
+public class Game implements Listener {
 	
 	public Lobby lobby;
-	public boolean running;
+	private boolean running;
 
 	public Game(Lobby lobby) {
 		
@@ -14,5 +16,15 @@ public class Game {
 	public void start() {
 		
 		running = true;
+	}
+	
+	public boolean isRunning() {
+		
+		return running;
+	}
+	
+	public void finish() {
+		
+		running = false;
 	}
 }
