@@ -15,7 +15,7 @@ public class Lobby {
 	public Lobby() {
 		
 		teams = new Team[2];
-		teams[0] = new Team("Red");	// i nomi possono essere anche presi dal config
+		teams[0] = new Team("Red");
 		teams[1] = new Team("Blue");
 	}
 	
@@ -26,7 +26,7 @@ public class Lobby {
 	
 	public void chooseTeam(Player p) {
 		
-		Inventory inv = Bukkit.createInventory(null, 9, "Â§9Â§lTeam Chooser");
+		Inventory inv = Bukkit.createInventory(null, 9, "§9§lTeam Chooser");
 		
 		inv.setItem(0, WoolEvents.redWool);
 		inv.setItem(1, WoolEvents.blueWool);
@@ -65,5 +65,5 @@ public class Lobby {
 		}
 		
 		return null;
-	}
+	 }
 }

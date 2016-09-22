@@ -27,9 +27,9 @@ public class OtherEvents implements Listener {
 	    	if (e.getLine(0).equalsIgnoreCase("lobby")) {
 	    		
 	    	}
-	      e.setLine(0, "Â§1Â§l[Dedalo]");
+	      e.setLine(0, "§1§l[Dedalo]");
 	      e.setLine(1, "");
-	      e.setLine(2, "Â§2Â§lJoin");
+	      e.setLine(2, "§2§lJoin");
 	    //e.setLine(3, Player dentro + "/" + MAX_LOBBY);
 	    
 	    }

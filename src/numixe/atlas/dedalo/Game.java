@@ -22,7 +22,7 @@ public class Game {
 		// configure start event
 		running = true;
 		timeEvents = new TimeEvent(180); // 3 minuti
-		Bukkit.getServer().broadcastMessage("ยง9Starting game");
+		Bukkit.getServer().broadcastMessage("ง9Starting game");
 	}
 	
 	public boolean isRunning() {
@@ -33,7 +33,7 @@ public class Game {
 	public void finish() {
 		
 		// configure finish event
-		Bukkit.getServer().broadcastMessage("ยง9Finishing game");
+		Bukkit.getServer().broadcastMessage("ง9Finishing game");
 		running = false;
 		timeEvents.destroy();
 	}
