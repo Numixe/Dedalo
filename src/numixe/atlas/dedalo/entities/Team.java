@@ -7,12 +7,14 @@ public class Team {
 
 	public List<DPlayer> players;
 	public String name;
+	public int id;
 	public static final int MAX_PLAYERS = 16;
 	
-	public Team(String name) {
+	public Team(int id, String name) {
 		
 		players = new ArrayList<DPlayer>();
 		this.name = name;
+		this.id = id;
 	}
 	
 	public void addPlayer(DPlayer p) {
@@ -25,11 +27,11 @@ public class Team {
 		String color = "";
 		
 		if (name.equalsIgnoreCase("red"))
-			color = "งc";
+			color = "ยงc";
 		else if (name.equalsIgnoreCase("blue"))
-			color = "ง9";
+			color = "ยง9";
 		
-		p.player.sendMessage("ง9Dedalo> ง7Sei stato aggiunto al Team " + color + name + "!");
+		p.player.sendMessage("ยง9Dedalo> ยง7Sei stato aggiunto al Team " + color + name + "!");
 	}
 	
 	public int size() {

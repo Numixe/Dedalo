@@ -13,17 +13,24 @@ public class Reload implements Listener {
 	
 	public static final ItemStack RedReload =  genBlock("red");
 	public static final ItemStack BlueReload = genBlock("blue");
-	public static final String RelComplete = "§9Dedalo> §7Ricarica completata!";
+	public static final String RelComplete = "ï¿½9Dedalo> ï¿½7Ricarica completata!";	
+	
+	/**
+	 * Ho gia' gestito questo evento tramite la classe DPlayer, PlayerEvents e ChargeEvent
+	 * Quando il giocatore si piazza sul blocco di spawn, la barra dell'exp, che rappresenta la carica,
+	 * inizia automaticamente a caricarsi finchÃ¨ il giocatore non esce dal blocco o la barra non e' totalmente
+	 * carica
+	 */
 	
 	@EventHandler
-	public void reloadGun(PlayerInteractEvent e) {
+	public void reloadGun(PlayerInteractEvent e) {	
 		Action a = e.getAction();
 		Player p = e.getPlayer();
 		
 		if (a.equals(Action.RIGHT_CLICK_BLOCK)) {
 			Block block = e.getClickedBlock();
-			if (block.equals(RedReload)) {
-				p.sendMessage("a");
+			if (block.equals(RedReload)) {	// non funzionerebbe perche stai comparando un Block con un ItemStack
+				p.sendMessage("a");			// il che e' sempre false, dai un occhiata a DPlayer
 				//reload red
 			} else if (block.equals(BlueReload)) {
 				p.sendMessage(RelComplete);

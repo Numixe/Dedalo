@@ -15,8 +15,8 @@ public class Lobby {
 	public Lobby() {
 		
 		teams = new Team[2];
-		teams[0] = new Team("Red");
-		teams[1] = new Team("Blue");
+		teams[0] = new Team(0, "Red");
+		teams[1] = new Team(1, "Blue");
 	}
 	
 	public void addToTeam(int team_index, DPlayer p) {
@@ -26,7 +26,7 @@ public class Lobby {
 	
 	public void chooseTeam(Player p) {
 		
-		Inventory inv = Bukkit.createInventory(null, 9, "§9§lTeam Chooser");
+		Inventory inv = Bukkit.createInventory(null, 9, "ï¿½9ï¿½lTeam Chooser");
 		
 		inv.setItem(0, WoolEvents.redWool);
 		inv.setItem(1, WoolEvents.blueWool);

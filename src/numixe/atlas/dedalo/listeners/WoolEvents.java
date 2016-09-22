@@ -19,8 +19,8 @@ import numixe.atlas.dedalo.entities.DPlayer;
 
 public class WoolEvents implements Listener {
 	
-	public static final ItemStack redWool = WoolEvents.genWool("red");
-	public static final ItemStack blueWool = WoolEvents.genWool("blue");
+	public static final ItemStack redWool = WoolEvents.genWool(0);
+	public static final ItemStack blueWool = WoolEvents.genWool(1);
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -35,7 +35,7 @@ public class WoolEvents implements Listener {
 			
 		    Sign sign = (Sign) block.getState();
 		    
-		    if (sign.getLine(0).equalsIgnoreCase("§1§l[Dedalo]")) { // i nomi possono essere anche presi dal config
+		    if (sign.getLine(0).equalsIgnoreCase("Â§1Â§l[Dedalo]")) { // i nomi possono essere anche presi dal config
 		    	
 		    	game.lobby.chooseTeam(p);
 		    }
@@ -45,7 +45,7 @@ public class WoolEvents implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		
-		if (!event.getInventory().getName().equalsIgnoreCase("§9§lTeam Chooser"))
+		if (!event.getInventory().getName().equalsIgnoreCase("Â§9Â§lTeam Chooser"))
 			return;
 		
 		event.setCancelled(true);
@@ -63,39 +63,46 @@ public class WoolEvents implements Listener {
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(0, new DPlayer(p));
 			else
-				p.sendMessage("§9Sei giÃ  in un team");
+				p.sendMessage("Â§9Sei giÃ  in un team");
 		}
 		else if (event.getCurrentItem().equals(blueWool)) {
 			
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(1, new DPlayer(p));
 			else
-				p.sendMessage("§9Sei giÃ  in un team");
+				p.sendMessage("Â§9Sei giÃ  in un team");
 		}
 		
 		if (game.lobby.isFull()) {
 			
-			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
+			new Timer("startgame", "Â§7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 		
 		p.closeInventory();
 	}
 	
-	public static final ItemStack genWool(String name) {
+	public static final ItemStack genWool(int id) {
 		
 		ItemStack out = null;
 		String display_name = null;
 		DyeColor color = null; 
 		
-		if (name.equalsIgnoreCase("red")) {
+		switch(id) {
+		
+		case 0:
 			
 			color = DyeColor.RED;
-			display_name = "§c§lRed";
+			display_name = "Â§cÂ§lRed";
+			break;
 			
-		} else if (name.equalsIgnoreCase("blue")) {
+		case 1:
 			
 			color = DyeColor.BLUE;
-			display_name = "§9§lBlue";
+			display_name = "Â§9Â§lBlue";
+			break;
+			
+		default:
+			break;
 		}
 		
 		Wool wool = new Wool(color);
