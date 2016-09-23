@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import numixe.atlas.dedalo.game.Reload;
 import numixe.atlas.dedalo.listeners.OtherEvents;
+import numixe.atlas.dedalo.listeners.PlayerEvents;
 import numixe.atlas.dedalo.listeners.Timer;
 import numixe.atlas.dedalo.listeners.WoolEvents;
 
@@ -30,6 +31,7 @@ public class Dedalo extends JavaPlugin {
 		plugin = this;
         Bukkit.getServer().getPluginManager().registerEvents(new WoolEvents(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new OtherEvents(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new Reload(), this);
 	}
 	
@@ -64,7 +66,7 @@ public class Dedalo extends JavaPlugin {
 		
 		if (cmd.getName().equalsIgnoreCase("timerstartgame")) {
 			
-			new Timer("startgame", "�7Il gioco iniziera' tra &sec secondi...", 5);
+			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 	    	
 		return true;

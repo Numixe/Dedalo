@@ -14,7 +14,7 @@ public class DPlayer {
 	
 	public Player player;
 	public int kills, deaths;
-	public int charge;			// sistema di ricarica ancora da decidere
+	private int charge;			// sistema di ricarica ancora da decidere
 	private boolean charging;
 	private ChargeEvent chargeEvent;
 	
@@ -93,6 +93,11 @@ public class DPlayer {
 		}
 		
 		charging = value;
+	}
+	
+	public int getCharge() {
+		
+		return charge;
 	}
 	
 	public boolean isCharging() {
