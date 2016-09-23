@@ -10,11 +10,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import static numixe.atlas.dedalo.Dedalo.plugin;
+
 public class Lobby {
 	
 	public Team[] teams;
 	private HashMap<String, Integer> map;	// register player team index, more search efficiency
-	public static final String INVENTORY_NAME = "§9§lTeam Chooser";
+	public static final String INVENTORY_NAME = "Â§9Â§lTeam Chooser";
 	
 	public Lobby() {
 		
@@ -23,6 +25,8 @@ public class Lobby {
 		teams[1] = new Team(1, "Blue");
 		
 		map = new HashMap<String, Integer>();
+		
+		Bukkit.getServer().getPluginManager().registerEvents(new WoolEvents(), plugin);
 	}
 	
 	public void addToTeam(int team_index, DPlayer p) {
