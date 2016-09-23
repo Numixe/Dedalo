@@ -11,8 +11,8 @@ public class DPlayer {
 	
 	public static final int MAX_CHARGE = 99;	// leggermente inferiore al 100% per evitare che salga di livello
 	public static final int CHARGE_PER_UNIT = 10;
-	public static final String MAX_CHARGE_MSG = "ยง9Dedalo> ยง7Ricarica completata!";
-	public static final String CHARGE_MSG = "ยง9Dedalo> ยง7Ricarica...!";
+	public static final String MAX_CHARGE_MSG = "ง9Dedalo> ง7Ricarica completata!";
+	public static final String CHARGE_MSG = "ง9Dedalo> ง7Ricarica...!";
 	
 	public Player player;
 	public int kills, deaths;

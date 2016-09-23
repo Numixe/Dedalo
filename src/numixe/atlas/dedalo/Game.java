@@ -25,7 +25,7 @@ public class Game {
 		// configure start event
 		running = true;
 		timeEvents = new TimeEvent(180); // 3 minuti
-		Bukkit.getServer().broadcastMessage("ï¿½9Starting game");
+		Bukkit.getServer().broadcastMessage("§9Starting game");
 	}
 	
 	public boolean isRunning() {
@@ -36,7 +36,7 @@ public class Game {
 	public void finish() {
 		
 		// configure finish event
-		Bukkit.getServer().broadcastMessage("ï¿½9Finishing game");
+		Bukkit.getServer().broadcastMessage("§9Finishing game");
 		running = false;
 		timeEvents.destroy();
 	}

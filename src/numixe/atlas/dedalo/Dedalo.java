@@ -66,7 +66,7 @@ public class Dedalo extends JavaPlugin {
 		
 		if (cmd.getName().equalsIgnoreCase("timerstartgame")) {
 			
-			new Timer("startgame", "ยง7Il gioco iniziera' tra &sec secondi...", 5);
+			new Timer("startgame", "ง7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 	    	
 		return true;

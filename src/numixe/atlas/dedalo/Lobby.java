@@ -14,7 +14,7 @@ public class Lobby {
 	
 	public Team[] teams;
 	private HashMap<String, Integer> map;	// register player team index, more search efficiency
-	public static final String INVENTORY_NAME = "Â§9Â§lTeam Chooser";
+	public static final String INVENTORY_NAME = "§9§lTeam Chooser";
 	
 	public Lobby() {
 		
