@@ -11,8 +11,8 @@ public class DPlayer {
 	
 	public static final int MAX_CHARGE = 99;	// leggermente inferiore al 100% per evitare che salga di livello
 	public static final int CHARGE_PER_UNIT = 10;
-	public static final String MAX_CHARGE_MSG = "§9Dedalo> §7Ricarica completata!";
-	public static final String CHARGE_MSG = "§9Dedalo> §7Ricarica...!";
+	public static final String MAX_CHARGE_MSG = "ï¿½9Dedalo> ï¿½7Ricarica completata!";
+	public static final String CHARGE_MSG = "ï¿½9Dedalo> ï¿½7Ricarica...!";
 	
 	public Player player;
 	public int kills, deaths;
@@ -129,5 +129,15 @@ public class DPlayer {
 			return false;
 		
 		return true;
+	}
+	
+	public void onDeath() {
+		
+		player.sendMessage("You Died!");
+		
+		spawn();
+        player.getInventory().clear();
+        player.setHealth(10);
+        player.setFoodLevel(10);
 	}
 }
