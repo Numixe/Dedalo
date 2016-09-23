@@ -12,9 +12,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import numixe.atlas.dedalo.game.Reload;
 import numixe.atlas.dedalo.listeners.OtherEvents;
 import numixe.atlas.dedalo.listeners.PlayerEvents;
+import numixe.atlas.dedalo.listeners.ReloadTouchEvents;
 import numixe.atlas.dedalo.listeners.Timer;
 import numixe.atlas.dedalo.listeners.WoolEvents;
 
@@ -32,7 +32,7 @@ public class Dedalo extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(new WoolEvents(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new OtherEvents(), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new Reload(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new ReloadTouchEvents(), this);
 	}
 	
 	public void onDisable() {
@@ -66,7 +66,7 @@ public class Dedalo extends JavaPlugin {
 		
 		if (cmd.getName().equalsIgnoreCase("timerstartgame")) {
 			
-			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
+			new Timer("startgame", "ï¿½7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 	    	
 		return true;

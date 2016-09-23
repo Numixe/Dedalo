@@ -36,7 +36,7 @@ public class WoolEvents implements Listener {
 			
 		    Sign sign = (Sign) block.getState();
 		    
-		    if (sign.getLine(0).equalsIgnoreCase("§1§l[Dedalo]")) { // i nomi possono essere anche presi dal config
+		    if (sign.getLine(0).equalsIgnoreCase("Â§1Â§l[Dedalo]")) { // i nomi possono essere anche presi dal config
 		    	
 		    	game.lobby.chooseTeam(p);
 		    }
@@ -64,19 +64,19 @@ public class WoolEvents implements Listener {
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(0, new DPlayer(p));
 			else
-				p.sendMessage("§9Sei giÃ  in un team");
+				p.sendMessage("Â§9Sei giÃ  in un team");
 		}
 		else if (event.getCurrentItem().equals(blueWool)) {
 			
 			if (game.lobby.ownedBy(p) == null)
 				game.lobby.addToTeam(1, new DPlayer(p));
 			else
-				p.sendMessage("§9Sei giÃ  in un team");
+				p.sendMessage("Â§9Sei giÃ  in un team");
 		}
 		
 		if (game.lobby.isFull()) {
 			
-			new Timer("startgame", "§7Il gioco iniziera' tra &sec secondi...", 5);
+			new Timer("startgame", "Â§7Il gioco iniziera' tra &sec secondi...", 5);
 		}
 		
 		p.closeInventory();
@@ -93,13 +93,13 @@ public class WoolEvents implements Listener {
 		case 0:
 			
 			color = DyeColor.RED;
-			display_name = "§c§lRed";
+			display_name = "Â§cÂ§lRed";
 			break;
 			
 		case 1:
 			
 			color = DyeColor.BLUE;
-			display_name = "§9§lBlue";
+			display_name = "Â§9Â§lBlue";
 			break;
 			
 		default:

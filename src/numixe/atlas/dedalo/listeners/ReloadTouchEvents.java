@@ -1,4 +1,4 @@
-package numixe.atlas.dedalo.game;
+package numixe.atlas.dedalo.listeners;
 
 import numixe.atlas.dedalo.entities.DPlayer;
 import numixe.atlas.dedalo.entities.Team;
@@ -12,7 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class Reload implements Listener {
+public class ReloadTouchEvents implements Listener {
 	
 	public static final ItemStack RedReload =  genBlock("red");
 	public static final ItemStack BlueReload = genBlock("blue");
