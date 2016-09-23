@@ -14,6 +14,7 @@ public class Lobby {
 	
 	public Team[] teams;
 	private HashMap<String, Integer> map;	// register player team index, more search efficiency
+	public static final String INVENTORY_NAME = "§9§lTeam Chooser";
 	
 	public Lobby() {
 		
@@ -32,7 +33,7 @@ public class Lobby {
 	
 	public void chooseTeam(Player p) {
 		
-		Inventory inv = Bukkit.createInventory(null, 9, "�9�lTeam Chooser");
+		Inventory inv = Bukkit.createInventory(null, 9, INVENTORY_NAME);
 		
 		inv.setItem(0, WoolEvents.redWool);
 		inv.setItem(1, WoolEvents.blueWool);

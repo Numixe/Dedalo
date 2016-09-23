@@ -12,6 +12,7 @@ public class DPlayer {
 	public static final int MAX_CHARGE = 99;	// leggermente inferiore al 100% per evitare che salga di livello
 	public static final int CHARGE_PER_UNIT = 10;
 	public static final String MAX_CHARGE_MSG = "§9Dedalo> §7Ricarica completata!";
+	public static final String CHARGE_MSG = "§9Dedalo> §7Ricarica...!";
 	
 	public Player player;
 	public int kills, deaths;
@@ -58,6 +59,7 @@ public class DPlayer {
 		if (charge == MAX_CHARGE) {
 			
 			player.sendMessage(MAX_CHARGE_MSG);
+			return;
 		}
 		
 		charge += CHARGE_PER_UNIT;
@@ -66,6 +68,7 @@ public class DPlayer {
 			charge = MAX_CHARGE;
 		
 		player.setExp((float)charge / 100);
+		player.sendMessage(CHARGE_MSG);
 	}
 	
 	public void chargeDown(int amount) {

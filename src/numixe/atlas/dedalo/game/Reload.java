@@ -1,8 +1,11 @@
 package numixe.atlas.dedalo.game;
 
+import numixe.atlas.dedalo.entities.DPlayer;
+import numixe.atlas.dedalo.entities.Team;
+import static numixe.atlas.dedalo.Dedalo.game;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -13,7 +16,6 @@ public class Reload implements Listener {
 	
 	public static final ItemStack RedReload =  genBlock("red");
 	public static final ItemStack BlueReload = genBlock("blue");
-	public static final String RelComplete = "�9Dedalo> �7Ricarica completata!";	
 	
 	/**
 	 * Ho gia' gestito questo evento tramite la classe DPlayer, PlayerEvents e ChargeEvent
@@ -23,18 +25,24 @@ public class Reload implements Listener {
 	 */
 	
 	@EventHandler
-	public void reloadGun(PlayerInteractEvent e) {	
-		Action a = e.getAction();
-		Player p = e.getPlayer();
+	public void onPlayerInteract(PlayerInteractEvent e) {	
 		
-		if (a.equals(Action.RIGHT_CLICK_BLOCK)) {
+		DPlayer p = game.lobby.getPlayer(e.getPlayer());
+		Team team = game.lobby.ownedBy(e.getPlayer());
+		
+		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			
 			Block block = e.getClickedBlock();
-			if (block.equals(RedReload)) {	// non funzionerebbe perche stai comparando un Block con un ItemStack
-				p.sendMessage("a");			// il che e' sempre false, dai un occhiata a DPlayer
-				//reload red
-			} else if (block.equals(BlueReload)) {
-				p.sendMessage(RelComplete);
-				//reload blue
+			
+			if (block.getDrops().toArray()[0].equals(RedReload)) {
+				
+				if (team.id == 0)
+					p.chargeUp();
+				
+			} else if (block.getDrops().toArray()[0].equals(BlueReload)) {
+				
+				if (team.id == 1)
+					p.chargeUp();
 			}
 		}
 	}

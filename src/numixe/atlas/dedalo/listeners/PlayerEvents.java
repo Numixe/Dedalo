@@ -19,7 +19,14 @@ public class PlayerEvents implements Listener {
 		
 		// controlla se si trova allo spawn
 		
-		dp.setCharging(dp.isOnSpawn());
+		try {
+			
+			dp.setCharging(dp.isOnSpawn());
+			
+		} catch (NullPointerException ex) {
+			
+			return;
+		}
 	}
 	
 }

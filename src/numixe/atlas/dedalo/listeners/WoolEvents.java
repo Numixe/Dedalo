@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
 
 import static numixe.atlas.dedalo.Dedalo.*;
+import numixe.atlas.dedalo.Lobby;
 import numixe.atlas.dedalo.entities.DPlayer;
 
 public class WoolEvents implements Listener {
@@ -45,7 +46,7 @@ public class WoolEvents implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		
-		if (!event.getInventory().getName().equalsIgnoreCase("§9§lTeam Chooser"))
+		if (!event.getInventory().getName().equalsIgnoreCase(Lobby.INVENTORY_NAME))
 			return;
 		
 		event.setCancelled(true);
