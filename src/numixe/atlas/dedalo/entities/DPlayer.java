@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class DPlayer {
 	
-	public static final int MAX_CHARGE = 99;
+	public static final int MAX_CHARGE = 99;	// leggermente inferiore al 100% per evitare che salga di livello
 	public static final int CHARGE_PER_UNIT = 10;
 	public static final String MAX_CHARGE_MSG = "§9Dedalo> §7Ricarica completata!";
 	
@@ -62,7 +62,7 @@ public class DPlayer {
 		charge += CHARGE_PER_UNIT;
 		
 		if (charge > MAX_CHARGE)
-			charge = MAX_CHARGE;	// leggermente inferiore per evitare che salga di livello
+			charge = MAX_CHARGE;
 		
 		player.setExp((float)charge / 100);
 	}
