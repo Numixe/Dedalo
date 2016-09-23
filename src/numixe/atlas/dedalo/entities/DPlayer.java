@@ -79,7 +79,7 @@ public class DPlayer {
 	
 	public void setCharging(boolean value) {
 		
-		if (charging && value || !(charging || value))	// charging == value
+		if (charging == value)
 			return;
 			
 		if (value) {
