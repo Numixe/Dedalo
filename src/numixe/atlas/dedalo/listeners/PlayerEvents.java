@@ -1,5 +1,7 @@
 package numixe.atlas.dedalo.listeners;
 
+import numixe.atlas.dedalo.entities.DPlayer;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,13 +15,11 @@ public class PlayerEvents implements Listener {
 	public void onPlayerMove(PlayerMoveEvent event) {
 		
 		Player p = event.getPlayer();
+		DPlayer dp = game.lobby.getPlayer(p);
 		
 		// controlla se si trova allo spawn
-		// ho usato Block.equals(Block) per ignorare yaw e pitch
 		
-		boolean onSpawn = p.getLocation().getBlock().equals( game.field.spawnLocation(game.lobby.ownedBy(p)).getBlock() );
-		
-		game.lobby.getPlayer(p).setCharging(onSpawn);
+		dp.setCharging(dp.isOnSpawn());
 	}
 	
 }

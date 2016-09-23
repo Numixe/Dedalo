@@ -4,6 +4,7 @@ import static numixe.atlas.dedalo.Dedalo.game;
 
 import numixe.atlas.dedalo.listeners.ChargeEvent;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class DPlayer {
@@ -108,5 +109,22 @@ public class DPlayer {
 	public void spawn() {
 		
 		player.teleport(game.field.spawnLocation(game.lobby.ownedBy(player)));
+	}
+	
+	public boolean isOnSpawn() {
+		
+		Location pl_loc = player.getLocation();
+		Location spawn_loc = game.field.spawnLocation(game.lobby.ownedBy(player));
+		
+		if (pl_loc.getBlockX() != spawn_loc.getBlockX())	// compare int to int
+			return false;
+		
+		if (pl_loc.getBlockY() != spawn_loc.getBlockY())
+			return false;
+		
+		if (pl_loc.getBlockZ() != spawn_loc.getBlockZ())
+			return false;
+		
+		return true;
 	}
 }
