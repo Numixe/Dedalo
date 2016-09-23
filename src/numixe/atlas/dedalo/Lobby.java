@@ -1,5 +1,7 @@
 package numixe.atlas.dedalo;
 
+import java.util.HashMap;
+
 import numixe.atlas.dedalo.entities.DPlayer;
 import numixe.atlas.dedalo.entities.Team;
 import numixe.atlas.dedalo.listeners.WoolEvents;
@@ -11,17 +13,21 @@ import org.bukkit.inventory.Inventory;
 public class Lobby {
 	
 	public Team[] teams;
+	private HashMap<String, Integer> map;	// register player team index, more search efficiency
 	
 	public Lobby() {
 		
 		teams = new Team[2];
 		teams[0] = new Team(0, "Red");
 		teams[1] = new Team(1, "Blue");
+		
+		map = new HashMap<String, Integer>();
 	}
 	
 	public void addToTeam(int team_index, DPlayer p) {
 		
 		teams[team_index].addPlayer(p);
+		map.put(p.getName(), team_index);
 	}
 	
 	public void chooseTeam(Player p) {
@@ -39,31 +45,23 @@ public class Lobby {
 		return teams[0].size() == Team.MAX_PLAYERS && teams[1].size() == Team.MAX_PLAYERS;
 	}
 	
-	public Team ownedBy(Player pl) {
+	public Team ownedBy(Player p) {
 		
-		for (Team t : teams) {
+		Integer index = map.get(p.getName());
 		
-			for (DPlayer p : t.players) {
-			
-				if (p.player.equals(pl))
-					return t;
-			}
-		}
+		if (index == null)
+			return null;
 		
-		return null;
+		return teams[index];
 	}
 	
-	public DPlayer getPlayer(Player pl) {
+	public DPlayer getPlayer(Player p) {
 		
-		for (Team t : teams) {
-			
-			for (DPlayer p : t.players) {
-				
-				if (p.player.equals(pl))
-					return p;
-			}
-		}
+		Team team = ownedBy(p);
 		
-		return null;
+		if (team == null)
+			return null;
+		
+		return team.getPlayer(p.getName());
 	 }
 }

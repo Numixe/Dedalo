@@ -1,18 +1,18 @@
 package numixe.atlas.dedalo.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Team {
 
-	public List<DPlayer> players;
 	public String name;
 	public int id;
 	public static final int MAX_PLAYERS = 16;
 	
+	private HashMap<String, DPlayer> players;
+	
 	public Team(int id, String name) {
 		
-		players = new ArrayList<DPlayer>();
+		players = new HashMap<String, DPlayer>();
 		this.name = name;
 		this.id = id;
 	}
@@ -22,7 +22,7 @@ public class Team {
 		if (players.size() >= MAX_PLAYERS)
 			return;
 		
-		players.add(p);
+		players.put(p.getName(), p);
 		
 		String color = "";
 		
@@ -32,6 +32,11 @@ public class Team {
 			color = "§9";
 		
 		p.player.sendMessage("§9Dedalo> §7Sei stato aggiunto al Team " + color + name + "!");
+	}
+	
+	public DPlayer getPlayer(String name) {
+		
+		return players.get(name);
 	}
 	
 	public int size() {
