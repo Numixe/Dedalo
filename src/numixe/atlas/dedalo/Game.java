@@ -1,5 +1,7 @@
 package numixe.atlas.dedalo;
 
+import java.util.Random;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -17,6 +19,7 @@ public class Game {
 	private volatile boolean running;	// volatile = accessibilita' multithread
 	public TimeEvent timeEvents;
 	public Field field;
+	public Random random;
 	
 	Listener playerEvents, reloadTouchEvents;
 
@@ -26,6 +29,7 @@ public class Game {
 		running = false;
 		timeEvents = null;
 		field = new Field();
+		random = new Random();
 	}
 	
 	public void start() {

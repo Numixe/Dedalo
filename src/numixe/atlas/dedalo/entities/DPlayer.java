@@ -111,13 +111,13 @@ public class DPlayer {
 	
 	public void spawn() {
 		
-		player.teleport(game.field.spawnLocation(game.lobby.ownedBy(player)));
+		player.teleport(game.field.getCurrentSpawn(game.lobby.ownedBy(player)).location);
 	}
 	
 	public boolean isOnSpawn() {
 		
 		Location pl_loc = player.getLocation();
-		Location spawn_loc = game.field.spawnLocation(game.lobby.ownedBy(player));
+		Location spawn_loc = game.field.getCurrentSpawn(game.lobby.ownedBy(player)).location;
 		
 		if (pl_loc.getBlockX() != spawn_loc.getBlockX())	// compare int to int
 			return false;
