@@ -30,8 +30,11 @@ public class Field {
 			
 			if (plugin.getConfig().contains("chests"))
 				chest_size = plugin.getConfig().getInt("chests");
-			else
+			else {
+				plugin.getConfig().createSection("chests");
+				plugin.getConfig().set("chests", DEFAULT_CHEST_SIZE);
 				chest_size = DEFAULT_CHEST_SIZE;
+			}
 						
 			chests = new DChest[chest_size];
 			

@@ -42,9 +42,26 @@ public class Game {
 			
 			if (plugin.getConfig().contains("gamemode.chest"))
 				chestMode = plugin.getConfig().getBoolean("gamemode.chest");
+			else {
+				plugin.getConfig().createSection("gamemode.chest");
+				plugin.getConfig().set("gamemode.chest", true);
+			}
 			
-			if (plugin.getConfig().contains("gamemode.chest"))
+			if (plugin.getConfig().contains("gamemode.reloadtouch"))
 				reloadTouchMode = plugin.getConfig().getBoolean("gamemode.reloadtouch");
+			else {
+				plugin.getConfig().createSection("gamemode.reloadtouch");
+				plugin.getConfig().set("gamemode.reloadtouch", true);
+			}
+			
+		} else {
+			
+			plugin.getConfig().createSection("gamemode");
+			plugin.getConfig().createSection("gamemode.chest");
+			plugin.getConfig().createSection("gamemode.reloadTouch");
+			
+			plugin.getConfig().set("gamemode.chest", true);
+			plugin.getConfig().set("gamemode.reloadTouch", true);
 		}
 	}
 	
