@@ -22,12 +22,20 @@ public class Field {
 	public final int chest_size;
 	
 	public static final int MIN_DISTANCE = 2;
+	public static final int DEFAULT_X_SIZE = 4;
 	public static final int DEFAULT_CHEST_SIZE = 20;
 	public static final int DEFAULT_ZONE_CHANGE = 3;
 
-	public Field(int x_size) {
+	public Field() {
 		
-		this.x_size = x_size;
+		if (plugin.getConfig().contains("x_size"))
+			x_size = plugin.getConfig().getInt("x_size");
+		else {
+			x_size = DEFAULT_X_SIZE;
+			plugin.getConfig().createSection("x_size");
+			plugin.getConfig().set("x_size", x_size);
+		}
+		
 		zones = new Zone[x_size][];
 		positions = new Location[x_size][];
 		spawns = new Spawn[2];
@@ -153,16 +161,24 @@ public class Field {
 	
 	public void refreshChests() {
 		
+		// ancora da implementare
+	}
+	
+	public void refreshAll() {
 		
+		// change the configuration
+		
+		refreshZones();
+		
+		if (game.chestMode)
+			refreshChests();
+		
+		refreshSpawns();
 	}
 	
 	public static Field loadField() {
 		
-		int x_size = 4;
-		
-		// load data from init.yml
-		
-		Field out = new Field(x_size);
+		Field out = new Field();
 		
 		// load from init.yml
 		
@@ -174,10 +190,7 @@ public class Field {
 		int x;
 		int y;
 		
-		public Vector2i() {
-			
-			
-		}
+		public Vector2i() {}
 		
 		public Vector2i(int x, int y) {
 			
