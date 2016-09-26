@@ -1,24 +1,23 @@
 package numixe.atlas.dedalo.entities;
 
-import java.util.HashMap;
-
 import org.bukkit.Location;
-import org.bukkit.block.Chest;
 
-import static numixe.atlas.dedalo.Dedalo.game;
+import static numixe.atlas.dedalo.Dedalo.*;
 
-import numixe.atlas.dedalo.entities.Zone.Spawn;
+import numixe.atlas.dedalo.entities.Zone.*;
 
 public class Field {
 	
 	public Zone[][] zones;
 	public Location[][] positions;
 	public Spawn[] spawns;		// current spawns
-	private HashMap<String, Chest> chests;
+	public DChest[] chests;		// current chests
 	
 	public final int x_size;
+	public final int chest_size;
 	
 	public static final int MIN_DISTANCE = 2;
+	public static final int DEFAULT_CHEST_SIZE = 20;
 
 	public Field(int x_size) {
 		
@@ -26,12 +25,27 @@ public class Field {
 		zones = new Zone[x_size][];
 		positions = new Location[x_size][];
 		spawns = new Spawn[2];
-		chests = new HashMap<String, Chest>();	// String = Zone name, Chest = Block state instance
+		
+		if (game.chestMode) {
+			
+			if (plugin.getConfig().contains("chests"))
+				chest_size = plugin.getConfig().getInt("chests");
+			else
+				chest_size = DEFAULT_CHEST_SIZE;
+						
+			chests = new DChest[chest_size];
+			
+		} else {
+			
+			chest_size = 0;
+			chests = null;
+		}
+		
 	}
 	
-	public Chest[] getChests() {
+	public DChest[] getChests() {
 		
-		return chests.values().toArray(new Chest[chests.size()]);
+		return chests;
 	}
 	
 	public Spawn getCurrentSpawn(Team team) {	// returns the current spawn location (!! it changes during the game !!)

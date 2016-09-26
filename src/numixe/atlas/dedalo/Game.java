@@ -22,6 +22,10 @@ public class Game {
 	public Random random;
 	
 	Listener playerEvents, reloadTouchEvents;
+	
+	// gameMode booleans
+	
+	public boolean chestMode, reloadTouchMode;	// true by default
 
 	public Game(Lobby lobby) {
 		
@@ -30,6 +34,18 @@ public class Game {
 		timeEvents = null;
 		field = Field.loadField();
 		random = new Random();
+		
+		chestMode = true;
+		reloadTouchMode = true;
+		
+		if (plugin.getConfig().contains("gamemode")) {
+			
+			if (plugin.getConfig().contains("gamemode.chest"))
+				chestMode = plugin.getConfig().getBoolean("gamemode.chest");
+			
+			if (plugin.getConfig().contains("gamemode.chest"))
+				reloadTouchMode = plugin.getConfig().getBoolean("gamemode.reloadtouch");
+		}
 	}
 	
 	public void start() {

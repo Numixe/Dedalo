@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
@@ -15,14 +16,14 @@ public class Zone {
 	List<Block> blocks;
 	String name;
 	private List<Spawn> spawns;
-	private List<Location> chests;
+	private List<DChest> chests;
 
 	public Zone(String name) {
 		
 		blocks = new ArrayList<Block>();
 		this.name = name;
 		spawns = new ArrayList<Spawn>();	// possible spawns
-		chests = new ArrayList<Location>();
+		chests = new ArrayList<DChest>();
 	}
 	
 	public static void writeZone(Zone zone) {
@@ -47,7 +48,7 @@ public class Zone {
 				return;
 		}
 		
-		spawns.add(new Spawn(name, loc));
+		spawns.add(new Spawn(name, loc, this));
 	}
 	
 	public Spawn getSpawn(String name) {
@@ -92,42 +93,30 @@ public class Zone {
 		spawns.remove(index);
 	}
 	
-	public void addChest(Location loc) {
+	public void addChest(String name, Location loc) {
 		
-		chests.add(loc);
+		chests.add(new DChest(name, loc, this));
 	}
 	
-	public void removeChest(Location loc) {
+	public void removeChest(DChest chest) {
 		
-		chests.remove(loc);
+		chests.remove(chest);
 	}
 	
-	public Location getChestLocation(int index) {
+	public DChest getChest(int index) {
 		
 		return chests.get(index);
 	}
 	
-	public Location setChestLocation(int index, Location loc) {
+	public void setChest(int index, DChest chest) {
 		
-		return chests.set(index, loc);
-	}
-	
-	public Inventory getChestInventory(int index) {
-		
-		Chest ch = (Chest) chests.get(index).getBlock().getState();
-		
-		return ch.getBlockInventory();
+		chests.set(index, chest);
 	}
 	
 	public void setChestInventory(int index, Inventory inv) {
 		
-		Chest ch = (Chest) chests.get(index).getBlock().getState();
-		ch.getBlockInventory().setContents(inv.getContents());
-	}
-	
-	public Chest getChest(int index) {
-		
-		return (Chest) chests.get(index).getBlock().getState();
+		DChest ch = chests.get(index);
+		ch.replaceInventory(inv);
 	}
 	
 	public class Spawn {
@@ -136,11 +125,56 @@ public class Zone {
 		
 		public Location location;
 		public String name;
+		public int id;
+		public Zone owner;
 		
-		public Spawn(String name, Location location) {
+		public Spawn(String name, Location location, Zone owner) {
 			
 			this.location = location;
 			this.name = name;
+			this.owner = owner;
+			
+			this.id = game.random.nextInt();
+		}
+	}
+	
+	public class DChest {
+		
+		public Chest chest;
+		public Inventory inventory;
+		public Location location;
+		public String name;
+		public int id;
+		public Zone owner;
+		
+		public DChest(String name, Location location, Zone owner) {
+			
+			this.location = location;
+			this.name = name;
+			this.owner = owner;
+			
+			this.id = game.random.nextInt();
+			
+			chest = null;
+			inventory = null;
+		}
+		
+		public void generate(Inventory init) {
+			
+			location.getBlock().setType(Material.CHEST);
+			
+			chest = (Chest) location.getBlock().getState();
+			inventory = chest.getBlockInventory();
+			
+			if (init == null)
+				return;
+			
+			this.replaceInventory(init);
+		}
+		
+		public void replaceInventory(Inventory inv) {
+			
+			inventory.setContents(inv.getContents());
 		}
 	}
 }
