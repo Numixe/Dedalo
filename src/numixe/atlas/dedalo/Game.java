@@ -28,7 +28,7 @@ public class Game {
 		this.lobby = lobby;
 		running = false;
 		timeEvents = null;
-		field = new Field();
+		field = Field.loadField();
 		random = new Random();
 	}
 	

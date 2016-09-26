@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.Inventory;
 
 import static numixe.atlas.dedalo.Dedalo.game;
 
@@ -13,12 +15,14 @@ public class Zone {
 	List<Block> blocks;
 	String name;
 	private List<Spawn> spawns;
+	private List<Location> chests;
 
 	public Zone(String name) {
 		
 		blocks = new ArrayList<Block>();
 		this.name = name;
 		spawns = new ArrayList<Spawn>();	// possible spawns
+		chests = new ArrayList<Location>();
 	}
 	
 	public static void writeZone(Zone zone) {
@@ -86,6 +90,44 @@ public class Zone {
 	public void removeSpawn(int index) {
 		
 		spawns.remove(index);
+	}
+	
+	public void addChest(Location loc) {
+		
+		chests.add(loc);
+	}
+	
+	public void removeChest(Location loc) {
+		
+		chests.remove(loc);
+	}
+	
+	public Location getChestLocation(int index) {
+		
+		return chests.get(index);
+	}
+	
+	public Location setChestLocation(int index, Location loc) {
+		
+		return chests.set(index, loc);
+	}
+	
+	public Inventory getChestInventory(int index) {
+		
+		Chest ch = (Chest) chests.get(index).getBlock().getState();
+		
+		return ch.getBlockInventory();
+	}
+	
+	public void setChestInventory(int index, Inventory inv) {
+		
+		Chest ch = (Chest) chests.get(index).getBlock().getState();
+		ch.getBlockInventory().setContents(inv.getContents());
+	}
+	
+	public Chest getChest(int index) {
+		
+		return (Chest) chests.get(index).getBlock().getState();
 	}
 	
 	public class Spawn {

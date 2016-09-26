@@ -1,7 +1,9 @@
 package numixe.atlas.dedalo.entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+
+import org.bukkit.Location;
+import org.bukkit.block.Chest;
 
 import static numixe.atlas.dedalo.Dedalo.game;
 
@@ -9,15 +11,27 @@ import numixe.atlas.dedalo.entities.Zone.Spawn;
 
 public class Field {
 	
-	public List<List<Zone>> zones;
+	public Zone[][] zones;
+	public Location[][] positions;
 	public Spawn[] spawns;		// current spawns
+	private HashMap<String, Chest> chests;
+	
+	public final int x_size;
 	
 	public static final int MIN_DISTANCE = 2;
 
-	public Field() {
+	public Field(int x_size) {
 		
-		zones = new ArrayList<List<Zone>>();
+		this.x_size = x_size;
+		zones = new Zone[x_size][];
+		positions = new Location[x_size][];
 		spawns = new Spawn[2];
+		chests = new HashMap<String, Chest>();	// String = Zone name, Chest = Block state instance
+	}
+	
+	public Chest[] getChests() {
+		
+		return chests.values().toArray(new Chest[chests.size()]);
 	}
 	
 	public Spawn getCurrentSpawn(Team team) {	// returns the current spawn location (!! it changes during the game !!)
@@ -34,17 +48,17 @@ public class Field {
 		
 		int[] out = new int[2];
 		
-		for (int i = 0; i < zones.size(); i++) {
+		for (int i = 0; i < zones.length; i++) {
 		
-			out[0] = game.random.nextInt(zones.size());
+			out[0] = game.random.nextInt(zones.length);
 		
-			if (zones.get(out[0]).size() != 0) {
+			if (zones[out[0]].length != 0) {
 				
-				for (int j = 0; j < zones.get(out[0]).size(); j++) {
+				for (int j = 0; j < zones[out[0]].length; j++) {
 					
-					out[1] = game.random.nextInt(zones.get(out[0]).size());
+					out[1] = game.random.nextInt(zones[out[0]].length);
 					
-					if (zones.get(out[0]).get(out[1]) != null)
+					if (zones[out[0]][out[1]] != null)
 						break;
 				}
 				
@@ -65,7 +79,7 @@ public class Field {
 	
 	public void refreshSpawns() {
 		
-		if (zones.size() == 0) {
+		if (zones.length == 0) {
 			
 			spawns[0] = null;
 			spawns[1] = null;
@@ -75,7 +89,7 @@ public class Field {
 		int[] zc1 = randomZoneCoords();
 		int[] zc2 = null;
 		
-		int max = zones.size() * zones.size();
+		int max = zones.length * zones.length;
 		
 		for (int p = 0; p < max; p++) {
 			
@@ -87,16 +101,25 @@ public class Field {
 			// se non esistono zone abbastanza lontane verra' presa l'ultima generata
 		}
 		
-		Zone firstZone = zones.get(zc1[0]).get(zc1[1]);
-		Zone secondZone = zones.get(zc2[0]).get(zc2[1]);
+		Zone firstZone = zones[zc1[0]] [zc1[1]];
+		Zone secondZone = zones[zc2[0]] [zc2[1]];
 		
 		spawns[0] = firstZone.randomSpawn();
 		spawns[1] = secondZone.randomSpawn();
 	}
 	
+	public void refreshChests() {
+		
+		
+	}
+	
 	public static Field loadField() {
 		
-		Field out = new Field();
+		int x_size = 4;
+		
+		// load data from init.yml
+		
+		Field out = new Field(x_size);
 		
 		// load from init.yml
 		
