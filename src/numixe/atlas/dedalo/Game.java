@@ -32,7 +32,7 @@ public class Game {
 		this.lobby = lobby;
 		running = false;
 		timeEvents = null;
-		field = Field.loadField();
+		field = null;
 		random = new Random();
 		
 		chestMode = true;
@@ -70,6 +70,7 @@ public class Game {
 		// configure start event
 		running = true;
 		timeEvents = new TimeEvent(180); // 3 minuti
+		field = Field.loadField();
 		Bukkit.getServer().broadcastMessage("§9Starting game");
 		
 		Bukkit.getServer().getPluginManager().registerEvents(playerEvents = new PlayerEvents(), plugin);
@@ -87,6 +88,7 @@ public class Game {
 		Bukkit.getServer().broadcastMessage("§9Finishing game");
 		running = false;
 		timeEvents.destroy();
+		field = null;
 		
 		HandlerList.unregisterAll(playerEvents);
 		HandlerList.unregisterAll(reloadTouchEvents);

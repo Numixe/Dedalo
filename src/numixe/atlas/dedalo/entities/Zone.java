@@ -8,39 +8,27 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.material.MaterialData;
+import org.bukkit.util.Vector;
 
 import static numixe.atlas.dedalo.Dedalo.game;
 
 public class Zone {
 	
-	List<Block> blocks;
+	List<BlockNode> blocks;
 	String name;
 	private List<Spawn> spawns;
 	private List<DChest> chests;
 
 	public Zone(String name) {
 		
-		blocks = new ArrayList<Block>();
+		blocks = new ArrayList<BlockNode>();
 		this.name = name;
 		spawns = new ArrayList<Spawn>();	// possible spawns
 		chests = new ArrayList<DChest>();
 	}
 	
-	public static void writeZone(Zone zone) {
-		
-		// write zone to init.yml
-	}
-	
-	public static Zone loadZone(String name) {
-		
-		Zone out = new Zone(name);
-		
-		//load zone from init.yml
-		
-		return out;
-	}
-	
-	public void addSpawn(String name, Location loc) {
+	public void addSpawn(String name, Location absolute, Location reference) {
 		
 		for (Spawn i : spawns) {
 			
@@ -48,7 +36,7 @@ public class Zone {
 				return;
 		}
 		
-		spawns.add(new Spawn(name, loc, this));
+		spawns.add(new Spawn(name, absolute, reference, this));
 	}
 	
 	public Spawn getSpawn(String name) {
@@ -93,9 +81,9 @@ public class Zone {
 		spawns.remove(index);
 	}
 	
-	public void addChest(String name, Location loc) {
+	public void addChest(String name, Location absolute, Location reference) {
 		
-		chests.add(new DChest(name, loc, this));
+		chests.add(new DChest(name, absolute, reference, this));
 	}
 	
 	public void removeChest(DChest chest) {
@@ -119,22 +107,47 @@ public class Zone {
 		ch.replaceInventory(inv);
 	}
 	
+	public static void writeBlock(BlockNode node) {
+		
+		// write to init.yml
+	}
+	
+	public static List<BlockNode> loadBlocks() {
+		
+		List<BlockNode> out = new ArrayList<BlockNode>();
+		
+		// load from init.yml
+		
+		return out;
+	}
+	
+	public static void writeZone(Zone zone) {
+		
+		// write zone to init.yml
+	}
+	
+	public static Zone loadZone(String name) {
+		
+		Zone out = new Zone(name);
+		
+		//load zone from init.yml
+		
+		return out;
+	}
+	
 	public class Spawn {
 		
 		// struct Spawn
 		
-		public Location location;
+		public Vector location;
 		public String name;
-		public int id;
 		public Zone owner;
 		
-		public Spawn(String name, Location location, Zone owner) {
+		public Spawn(String name, final Location absolute, final Location reference, Zone owner) {
 			
-			this.location = location;
+			this.location = absolute.subtract(reference).toVector();
 			this.name = name;
 			this.owner = owner;
-			
-			this.id = game.random.nextInt();
 		}
 	}
 	
@@ -142,18 +155,15 @@ public class Zone {
 		
 		public Chest chest;
 		public Inventory inventory;
-		public Location location;
+		public Vector location;
 		public String name;
-		public int id;
 		public Zone owner;
 		
-		public DChest(String name, Location location, Zone owner) {
+		public DChest(String name, final Location absolute, final Location reference, Zone owner) {
 			
-			this.location = location;
+			this.location = absolute.subtract(reference).toVector();
 			this.name = name;
 			this.owner = owner;
-			
-			this.id = game.random.nextInt();
 			
 			chest = null;
 			inventory = null;
@@ -161,9 +171,9 @@ public class Zone {
 		
 		public void generate(Inventory init) {
 			
-			location.getBlock().setType(Material.CHEST);
+			location.toLocation(game.field.world).getBlock().setType(Material.CHEST);
 			
-			chest = (Chest) location.getBlock().getState();
+			chest = (Chest) location.toLocation(game.field.world).getBlock().getState();
 			inventory = chest.getBlockInventory();
 			
 			if (init == null)
@@ -175,6 +185,45 @@ public class Zone {
 		public void replaceInventory(Inventory inv) {
 			
 			inventory.setContents(inv.getContents());
+		}
+	}
+	
+	public class BlockNode {
+		
+		public final Vector relative;
+		public final MaterialData blockdata;
+		
+		public BlockNode(final Block absolute, final Location reference) {
+			
+			relative = absolute.getLocation().subtract(reference).toVector();
+			blockdata = absolute.getState().getData();
+		}
+		
+		@SuppressWarnings("deprecation")
+		public BlockNode(final Vector relative, Material material, byte data) {
+			
+			this.relative = relative;
+			blockdata = new MaterialData(material, data);
+		}
+		
+		public Block getBlock(final Location reference) {
+			
+			Location absolute = reference.add(relative);
+			Block out = absolute.getBlock();
+			out.getState().setData(blockdata);
+			
+			return out;
+		}
+		
+		@SuppressWarnings("deprecation")
+		public byte getData() {
+			
+			return blockdata.getData();
+		}
+		
+		public Material getType() {
+			
+			return blockdata.getItemType();
 		}
 	}
 }
