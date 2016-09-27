@@ -1,6 +1,7 @@
 package numixe.atlas.dedalo.entities;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,11 +17,9 @@ public class Field {
 	public Spawn[] spawns;		// current spawns
 	public DChest[] chests;		// current chests
 	
-	public final int chest_size;
 	public World world;
 	
 	public static final int MIN_DISTANCE = 2;
-	public static final int DEFAULT_X_SIZE = 4;
 	public static final int DEFAULT_CHEST_SIZE = 20;
 	public static final int DEFAULT_ZONE_CHANGE = 3;
 	public static final World DEFAULT_WORLD = Bukkit.getWorld("world");
@@ -30,24 +29,13 @@ public class Field {
 		spawns = new Spawn[2];
 		map = null;
 		world = DEFAULT_WORLD;
+		chests = new DChest[DEFAULT_CHEST_SIZE];
+	}
+	
+	public void setChestNumber(int number) {
 		
-		if (game.chestMode) {
-			
-			if (plugin.getConfig().contains("chests"))
-				chest_size = plugin.getConfig().getInt("chests");
-			else {
-				plugin.getConfig().createSection("chests");
-				plugin.getConfig().set("chests", DEFAULT_CHEST_SIZE);
-				chest_size = DEFAULT_CHEST_SIZE;
-			}
-						
-			chests = new DChest[chest_size];
-			
-		} else {
-			
-			chest_size = 0;
-			chests = null;
-		}
+		chests = null;
+		chests = new DChest[number];
 	}
 	
 	public DChest[] getChests() {
@@ -134,11 +122,9 @@ public class Field {
 			if (changed.contains(coords))
 				continue;
 			
-			String[] list = map[coords.x][coords.y].possibleZones;
+			map[coords.x][coords.y].assignRandomZone();
+			map[coords.x][coords.y].zone.spawnBlocks(map[coords.x][coords.y].position);
 			
-			int randomIndex = game.random.nextInt(list.length);
-			
-			map[coords.x][coords.y].zone = Zone.loadZone(list[randomIndex]);
 			changed.add(coords);
 		}
 	}
@@ -150,7 +136,7 @@ public class Field {
 	
 	public void refreshAll() {
 		
-		// change the configuration
+		// changes the configuration
 		
 		refreshZones();
 		
@@ -176,11 +162,43 @@ public class Field {
 						return false;
 					else if (j.position == null || j.possibleZones == null)
 						return false;
+					else {
+						
+						// spawn zones
+						
+						j.assignRandomZone();
+						j.zone.spawnBlocks(j.position);
+					}
 				}
 			}
 		}
 		
+		if (game.chestMode)
+			refreshChests();
+		
+		refreshSpawns();
+		
 		return true;
+	}
+	
+	public void destroy() {
+		
+		for (ZoneNode[] i : map) {
+			
+			for (ZoneNode j : i) {
+				
+				j.zone.destroyBlocks(j.position);
+				j.zone = null;
+			}
+		}
+		
+		for (DChest i : chests) {
+			
+			i.destroy();
+		}
+		
+		spawns[0] = null;
+		spawns[1] = null;
 	}
 	
 	public static Field loadField() {
@@ -211,5 +229,46 @@ public class Field {
 		public Location position;
 		public Zone zone;
 		public String[] possibleZones;
+		
+		public void assignRandomZone() {
+			
+			if (possibleZones == null)
+				return;
+			
+			int rand;
+			
+			if (zone == null) 
+				rand = game.random.nextInt(possibleZones.length);
+			else {
+				
+				while (zone.name == possibleZones[rand = game.random.nextInt(possibleZones.length)])
+					;
+				
+				zone.destroyBlocks(position);
+			}
+			
+			zone = Zone.loadZone(possibleZones[rand]);
+		}
+		
+		public List<DPlayer> playersInside() {
+			
+			List<DPlayer> out = new ArrayList<DPlayer>();
+			
+			Location furthest = zone.furthestLocation(position);
+			
+			for (DPlayer p : game.lobby.getPlayers()) {
+				
+				Location loc = p.player.getLocation().clone().subtract(position);
+				int x = Math.abs(loc.getBlockX());
+				int z = Math.abs(loc.getBlockZ());
+				int fx = Math.abs(furthest.getBlockX());
+				int fz = Math.abs(furthest.getBlockZ());
+				
+				if (x <= fx && z <= fz)
+					out.add(p);
+			}
+			
+			return out;
+		}
 	}
 }

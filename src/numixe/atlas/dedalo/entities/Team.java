@@ -39,6 +39,11 @@ public class Team {
 		return players.get(name);
 	}
 	
+	public DPlayer[] getPlayers() {
+		
+		return players.values().toArray(new DPlayer[players.size()]);
+	}
+	
 	public int size() {
 		
 		return players.size();

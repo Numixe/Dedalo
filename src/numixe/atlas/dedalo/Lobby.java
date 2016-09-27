@@ -1,6 +1,8 @@
 package numixe.atlas.dedalo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import numixe.atlas.dedalo.entities.DPlayer;
 import numixe.atlas.dedalo.entities.Team;
@@ -69,4 +71,17 @@ public class Lobby {
 		
 		return team.getPlayer(p.getName());
 	 }
+	
+	public DPlayer[] getPlayers() {
+		
+		List<DPlayer> list = new ArrayList<DPlayer>();
+		
+		for (Team team : teams) {
+			
+			for (DPlayer pl : team.getPlayers())
+				list.add(pl);
+		}
+		
+		return list.toArray(new DPlayer[list.size()]);
+	}
 }

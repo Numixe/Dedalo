@@ -15,10 +15,11 @@ import static numixe.atlas.dedalo.Dedalo.game;
 
 public class Zone {
 	
-	List<BlockNode> blocks;
+	private List<BlockNode> blocks;
 	String name;
 	private List<Spawn> spawns;
 	private List<DChest> chests;
+	private BlockNode furthest;
 
 	public Zone(String name) {
 		
@@ -26,6 +27,27 @@ public class Zone {
 		this.name = name;
 		spawns = new ArrayList<Spawn>();	// possible spawns
 		chests = new ArrayList<DChest>();
+		furthest = null;
+	}
+	
+	public void spawnBlocks(Location position) {
+		
+		// spawns all registered blocks
+		
+		for (BlockNode node : blocks) {
+			
+			node.spawnBlock(position);
+		}
+	}
+	
+	public void destroyBlocks(Location position) {
+		
+		// destroy all registered blocks
+		
+		for (BlockNode node : blocks) {
+			
+			node.destroyBlock(position);
+		}
 	}
 	
 	public void addSpawn(String name, Location absolute, Location reference) {
@@ -107,6 +129,21 @@ public class Zone {
 		ch.replaceInventory(inv);
 	}
 	
+	public Location furthestLocation(final Location reference) {
+		
+		return reference.add(furthest.relative);
+	}
+	
+	public void setFurthest(BlockNode arg) {
+		
+		this.furthest = arg;
+	}
+	
+	public BlockNode getFurthest() {
+		
+		return furthest;
+	}
+	
 	public static void writeBlock(BlockNode node) {
 		
 		// write to init.yml
@@ -161,6 +198,8 @@ public class Zone {
 		
 		public DChest(String name, final Location absolute, final Location reference, Zone owner) {
 			
+			// da sistemare con le posizioni relative
+			
 			this.location = absolute.subtract(reference).toVector();
 			this.name = name;
 			this.owner = owner;
@@ -180,6 +219,11 @@ public class Zone {
 				return;
 			
 			this.replaceInventory(init);
+		}
+		
+		public void destroy() {
+			
+			location.toLocation(game.field.world).getBlock().setType(Material.AIR);
 		}
 		
 		public void replaceInventory(Inventory inv) {
@@ -206,13 +250,20 @@ public class Zone {
 			blockdata = new MaterialData(material, data);
 		}
 		
-		public Block getBlock(final Location reference) {
+		public Block spawnBlock(final Location reference) {
 			
 			Location absolute = reference.add(relative);
 			Block out = absolute.getBlock();
 			out.getState().setData(blockdata);
 			
 			return out;
+		}
+		
+		public void destroyBlock(final Location reference) {
+			
+			Location absolute = reference.add(relative);
+			Block out = absolute.getBlock();
+			out.setType(Material.AIR);
 		}
 		
 		@SuppressWarnings("deprecation")
