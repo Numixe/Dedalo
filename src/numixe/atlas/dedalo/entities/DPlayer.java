@@ -109,6 +109,11 @@ public class DPlayer {
 		return charging;
 	}
 	
+	public Location getLocation() {
+		
+		return player.getLocation();
+	}
+	
 	public void spawn() {
 		
 		player.teleport(game.field.getCurrentSpawnLocation(game.lobby.ownedBy(player)));

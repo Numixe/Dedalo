@@ -1,11 +1,14 @@
 package numixe.atlas.dedalo.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 
 import static numixe.atlas.dedalo.Dedalo.*;
 
@@ -14,43 +17,28 @@ import numixe.atlas.dedalo.entities.Zone.*;
 public class Field {
 	
 	public ZoneNode[][] map;	// bidimensional map
-	public Spawn[] spawns;		// current spawns
-	public DChest[] chests;		// current chests
+	public HashMap<String, Vector2i> spawnCoords;		// current spawns
 	
 	public World world;
 	
 	public static final int MIN_DISTANCE = 2;
 	public static final int DEFAULT_CHEST_SIZE = 20;
+	public static final int DEFAULT_CHEST_PER_ZONE = 6;
 	public static final int DEFAULT_ZONE_CHANGE = 3;
+	
 	public static final World DEFAULT_WORLD = Bukkit.getWorld("world");
 
 	public Field() {
 		
-		spawns = new Spawn[2];
+		spawnCoords = new HashMap<String, Vector2i>();
 		map = null;
 		world = DEFAULT_WORLD;
-		chests = new DChest[DEFAULT_CHEST_SIZE];
-	}
-	
-	public void setChestNumber(int number) {
-		
-		chests = null;
-		chests = new DChest[number];
-	}
-	
-	public DChest[] getChests() {
-		
-		return chests;
 	}
 	
 	public Location getCurrentSpawnLocation(Team team) {	// returns the current spawn location (!! it changes during the game !!)
 		
-		return spawns[team.id].location.toLocation(world);
-	}
-	
-	public Location getCurrentSpawnLocation(int team_index) {	// returns the current spawn location (!! it changes during the game !!)
-		
-		return spawns[team_index].location.toLocation(world);
+		Vector2i coords = spawnCoords.get(team.name);
+		return map[coords.x][coords.y].spawnLocation();
 	}
 	
 	private Vector2i randomZoneCoords() {
@@ -84,8 +72,6 @@ public class Field {
 		
 		if (map == null) {
 			
-			spawns[0] = null;
-			spawns[1] = null;
 			return;
 		}
 		
@@ -104,11 +90,26 @@ public class Field {
 			// se non esistono zone abbastanza lontane verra' presa l'ultima generata
 		}
 		
-		Zone firstZone = map[zc1.x] [zc1.y].zone;
-		Zone secondZone = map[zc2.x] [zc2.y].zone;
+		Team[] teams = game.lobby.teams;
 		
-		spawns[0] = firstZone.randomSpawn();
-		spawns[1] = secondZone.randomSpawn();
+		for (Team i : teams) {
+			
+			if (spawnCoords.containsKey(i.name)) {		// remove old spawns
+				
+				Vector2i old  =spawnCoords.get(i.name);
+				map[old.x][old.y].deleteSpawn();
+				spawnCoords.remove(i.name);
+			}
+		}
+		
+		ZoneNode firstZone = map[zc1.x] [zc1.y];
+		ZoneNode secondZone = map[zc2.x] [zc2.y];
+		
+		firstZone.setRandomSpawn();
+		secondZone.setRandomSpawn();
+		
+		spawnCoords.put(teams[0].name, zc1);
+		spawnCoords.put(teams[1].name, zc2);
 	}
 	
 	public void refreshZones() {
@@ -126,12 +127,44 @@ public class Field {
 			map[coords.x][coords.y].zone.spawnBlocks(map[coords.x][coords.y].position);
 			
 			changed.add(coords);
+			
+			List<DPlayer> players = map[coords.x][coords.y].playersInside();
+			
+			for (DPlayer p : players) {
+				
+				Location current;
+				
+				while ((current = p.getLocation()).getBlock().getType() != Material.AIR) {	
+					
+					// sposta il giocatore in direzione del centro
+					
+					Vector unit = map[coords.x][coords.y].getCenter().subtract(current).toVector().normalize();
+					p.player.teleport(current.add(unit));
+				}
+			}
 		}
 	}
 	
 	public void refreshChests() {
 		
-		// ancora da implementare
+		ArrayList<Vector2i> changed = new ArrayList<Vector2i>();
+		int csize = 0;
+		
+		while (changed.size() < DEFAULT_ZONE_CHANGE && csize < DEFAULT_CHEST_SIZE) {
+			
+			Vector2i coords = randomZoneCoords();
+			
+			if (changed.contains(coords))
+				continue;
+			
+			int addsize = game.random.nextInt(DEFAULT_CHEST_PER_ZONE);
+			csize += addsize;
+			
+			if (csize > DEFAULT_CHEST_SIZE)
+				addsize = csize - DEFAULT_CHEST_SIZE;
+			
+			map[coords.x][coords.y].spawnRandomChests(addsize);
+		}
 	}
 	
 	public void refreshAll() {
@@ -187,18 +220,11 @@ public class Field {
 			
 			for (ZoneNode j : i) {
 				
-				j.zone.destroyBlocks(j.position);
-				j.zone = null;
+				j.destroyZoneNode();
 			}
 		}
 		
-		for (DChest i : chests) {
-			
-			i.destroy();
-		}
-		
-		spawns[0] = null;
-		spawns[1] = null;
+		spawnCoords.clear();
 	}
 	
 	public static Field loadField() {
@@ -229,6 +255,8 @@ public class Field {
 		public Location position;
 		public Zone zone;
 		public String[] possibleZones;
+		public int[] chestsIndices;
+		public Spawn spawn;			// null if no spawn
 		
 		public void assignRandomZone() {
 			
@@ -250,11 +278,48 @@ public class Field {
 			zone = Zone.loadZone(possibleZones[rand]);
 		}
 		
+		public void spawnRandomChests(int size) {
+			
+			if (zone == null)
+				return;
+			
+			destroyChests();
+			
+			chestsIndices = new int[size];
+			
+			for (int i = 0; i < size; i++) {
+				
+				chestsIndices[i] = game.random.nextInt(zone.chestsSize());	// random chest location
+				int inv = game.random.nextInt(Zone.INVENTORIES.length);	// random chest inventory
+				
+				zone.spawnChest(position, inv, chestsIndices[i]);
+			}
+		}
+		
+		public void destroyZoneNode() {
+			
+			if (zone == null)
+				return;
+			
+			zone.destroyBlocks(position);
+			
+			destroyChests();
+		}
+		
+		public void destroyChests() {
+			
+			if (chestsIndices == null)
+				return;
+			
+			zone.destroyChests(position, chestsIndices);
+			chestsIndices = null;
+		}
+		
 		public List<DPlayer> playersInside() {
 			
 			List<DPlayer> out = new ArrayList<DPlayer>();
 			
-			Location furthest = zone.furthestLocation(position);
+			Location furthest = zone.furthestLocation(position).subtract(position);
 			
 			for (DPlayer p : game.lobby.getPlayers()) {
 				
@@ -269,6 +334,26 @@ public class Field {
 			}
 			
 			return out;
+		}
+		
+		public Location getCenter() {
+			
+			return zone.getCenter(position);
+		}
+		
+		public void setRandomSpawn() {
+			
+			spawn = zone.randomSpawn();
+		}
+		
+		public void deleteSpawn() {
+			
+			spawn = null;
+		}
+		
+		public Location spawnLocation() {
+			
+			return position.clone().add(spawn.location);
 		}
 	}
 }

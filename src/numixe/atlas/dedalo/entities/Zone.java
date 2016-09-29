@@ -20,6 +20,8 @@ public class Zone {
 	private List<Spawn> spawns;
 	private List<DChest> chests;
 	private BlockNode furthest;
+	
+	public static final Inventory[] INVENTORIES = loadInventories();
 
 	public Zone(String name) {
 		
@@ -28,6 +30,11 @@ public class Zone {
 		spawns = new ArrayList<Spawn>();	// possible spawns
 		chests = new ArrayList<DChest>();
 		furthest = null;
+	}
+	
+	public Location getCenter(final Location position) {
+		
+		return position.clone().add(furthest.relative).multiply(0.5);
 	}
 	
 	public void spawnBlocks(Location position) {
@@ -58,7 +65,7 @@ public class Zone {
 				return;
 		}
 		
-		spawns.add(new Spawn(name, absolute, reference, this));
+		spawns.add(new Spawn(name, absolute, reference));
 	}
 	
 	public Spawn getSpawn(String name) {
@@ -103,9 +110,35 @@ public class Zone {
 		spawns.remove(index);
 	}
 	
+	public void spawnChest(Location position, int inv, int index) {
+		
+		DChest chest = chests.get(index);
+			
+		if (chest.isGenerated())
+			return;
+			
+		chest.generate(position, Zone.INVENTORIES[inv]);
+	}
+	
+	public void destroyChests(Location position, int[] indices) {
+		
+		for (int i : indices) {
+			
+			DChest chest = chests.get(i);
+			
+			if (chest.isGenerated())
+				chest.destroy(position);
+		}
+	}
+	
+	public int chestsSize() {
+		
+		return chests.size();
+	}
+	
 	public void addChest(String name, Location absolute, Location reference) {
 		
-		chests.add(new DChest(name, absolute, reference, this));
+		chests.add(new DChest(name, absolute, reference));
 	}
 	
 	public void removeChest(DChest chest) {
@@ -131,7 +164,7 @@ public class Zone {
 	
 	public Location furthestLocation(final Location reference) {
 		
-		return reference.add(furthest.relative);
+		return reference.clone().add(furthest.relative);
 	}
 	
 	public void setFurthest(BlockNode arg) {
@@ -158,6 +191,20 @@ public class Zone {
 		return out;
 	}
 	
+	public static Inventory[] loadInventories() {
+		
+		List<Inventory> out = new ArrayList<Inventory>();
+		
+		// load from init.yml
+		
+		return out.toArray(new Inventory[out.size()]);
+	}
+	
+	public static void writeNewInventory(Inventory inv) {
+		
+		// write to init.yml
+	}
+	
 	public static void writeZone(Zone zone) {
 		
 		// write zone to init.yml
@@ -178,13 +225,11 @@ public class Zone {
 		
 		public Vector location;
 		public String name;
-		public Zone owner;
 		
-		public Spawn(String name, final Location absolute, final Location reference, Zone owner) {
+		public Spawn(String name, final Location absolute, final Location reference) {
 			
-			this.location = absolute.subtract(reference).toVector();
+			this.location = absolute.clone().subtract(reference).toVector();
 			this.name = name;
-			this.owner = owner;
 		}
 	}
 	
@@ -194,23 +239,21 @@ public class Zone {
 		public Inventory inventory;
 		public Vector location;
 		public String name;
-		public Zone owner;
 		
-		public DChest(String name, final Location absolute, final Location reference, Zone owner) {
+		public DChest(String name, final Location absolute, final Location reference) {
 			
 			// da sistemare con le posizioni relative
 			
-			this.location = absolute.subtract(reference).toVector();
+			this.location = absolute.clone().subtract(reference).toVector();
 			this.name = name;
-			this.owner = owner;
 			
 			chest = null;
 			inventory = null;
 		}
 		
-		public void generate(Inventory init) {
+		public void generate(final Location position, Inventory init) {
 			
-			location.toLocation(game.field.world).getBlock().setType(Material.CHEST);
+			position.clone().add(location).getBlock().setType(Material.CHEST);
 			
 			chest = (Chest) location.toLocation(game.field.world).getBlock().getState();
 			inventory = chest.getBlockInventory();
@@ -221,14 +264,21 @@ public class Zone {
 			this.replaceInventory(init);
 		}
 		
-		public void destroy() {
+		public void destroy(final Location position) {
 			
-			location.toLocation(game.field.world).getBlock().setType(Material.AIR);
+			position.clone().add(location).getBlock().setType(Material.AIR);
+			chest = null;
+			inventory = null;
 		}
 		
 		public void replaceInventory(Inventory inv) {
 			
 			inventory.setContents(inv.getContents());
+		}
+		
+		public boolean isGenerated() {
+			
+			return inventory != null;
 		}
 	}
 	
@@ -239,7 +289,7 @@ public class Zone {
 		
 		public BlockNode(final Block absolute, final Location reference) {
 			
-			relative = absolute.getLocation().subtract(reference).toVector();
+			relative = absolute.getLocation().clone().subtract(reference).toVector();
 			blockdata = absolute.getState().getData();
 		}
 		
@@ -252,7 +302,7 @@ public class Zone {
 		
 		public Block spawnBlock(final Location reference) {
 			
-			Location absolute = reference.add(relative);
+			Location absolute = reference.clone().add(relative);
 			Block out = absolute.getBlock();
 			out.getState().setData(blockdata);
 			
@@ -261,7 +311,7 @@ public class Zone {
 		
 		public void destroyBlock(final Location reference) {
 			
-			Location absolute = reference.add(relative);
+			Location absolute = reference.clone().add(relative);
 			Block out = absolute.getBlock();
 			out.setType(Material.AIR);
 		}
