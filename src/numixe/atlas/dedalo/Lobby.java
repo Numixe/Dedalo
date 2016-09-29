@@ -9,6 +9,7 @@ import numixe.atlas.dedalo.entities.Team;
 import numixe.atlas.dedalo.listeners.WoolEvents;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -19,6 +20,8 @@ public class Lobby {
 	public Team[] teams;
 	private HashMap<String, Integer> map;	// register player team index, more search efficiency
 	public static final String INVENTORY_NAME = "§9§lTeam Chooser";
+	
+	public static Location location = loadLocation();
 	
 	public Lobby() {
 		
@@ -83,5 +86,14 @@ public class Lobby {
 		}
 		
 		return list.toArray(new DPlayer[list.size()]);
+	}
+	
+	public static Location loadLocation() {
+		
+		/*
+		 *  Carica la location da init.yml
+		 */
+		
+		return null;
 	}
 }
