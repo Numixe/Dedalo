@@ -98,13 +98,14 @@ public class Dedalo extends JavaPlugin {
 			
 			if (!initfile.exists()) {
 				
+				initfile.getParentFile().mkdirs();
+				
 				try {
-					
 					initfile.createNewFile();
 					
-				} catch (IOException ex) {
+				} catch (IOException e) {
 					
-					getLogger().log(Level.SEVERE, "Could not create new configuration file " + initfile, ex);
+					e.printStackTrace();
 				}
 			}
 		}
