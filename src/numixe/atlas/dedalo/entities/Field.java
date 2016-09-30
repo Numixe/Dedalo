@@ -30,6 +30,15 @@ public class Field {
 	}
 	
 	/*
+	 *  Resituisce il nodo corrispondente alle coordinate 
+	 */
+	
+	public ZoneNode getNode(Vector2i v) {
+		
+		return map[v.x][v.y];
+	}
+	
+	/*
 	 *  Restituisce la posizione reale dello spawn di un team
 	 */
 	
@@ -57,7 +66,7 @@ public class Field {
 					
 					out.y = game.random.nextInt(map[out.x].length);
 					
-					if (map[out.x][out.y].zone != null)
+					if (getNode(out).zone != null)
 						break;
 				}
 				
@@ -99,13 +108,13 @@ public class Field {
 			if (spawnCoords.containsKey(i.name)) {		// rimuove i vecchi spawn
 				
 				Vector2i old = spawnCoords.get(i.name);
-				map[old.x][old.y].deleteSpawn();
+				getNode(old).deleteSpawn();
 				spawnCoords.remove(i.name);
 			}
 		}
 		
-		ZoneNode firstZone = map[zc1.x] [zc1.y];
-		ZoneNode secondZone = map[zc2.x] [zc2.y];
+		ZoneNode firstZone = getNode(zc1);
+		ZoneNode secondZone = getNode(zc2);
 		
 		// imposta i nuovi spawn casualmente
 		
@@ -131,8 +140,8 @@ public class Field {
 			if (changed.contains(coords))	// se e' gia stata scelta, tentane un'altra
 				continue;
 			
-			map[coords.x][coords.y].assignRandomZone();		// assegna una zona casuale (tra quelle della lista)
-			map[coords.x][coords.y].zone.spawnBlocks(map[coords.x][coords.y].position);	// genera i blocchi nel campo
+			getNode(coords).assignRandomZone();		// assegna una zona casuale (tra quelle della lista)
+			getNode(coords).zone.spawnBlocks(getNode(coords).position);	// genera i blocchi nel campo
 			
 			changed.add(coords);	// aggiungi questa zona tra quelle gia' scelte, onde evitare ripetizioni
 			

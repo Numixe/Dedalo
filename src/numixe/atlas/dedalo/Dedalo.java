@@ -28,6 +28,7 @@ public class Dedalo extends JavaPlugin {
 		plugin = this;
 		game = new Game(new Lobby());
         Bukkit.getServer().getPluginManager().registerEvents(new OtherEvents(), this);
+        reloadInit();
 	}
 	
 	public void onDisable() {
@@ -70,11 +71,6 @@ public class Dedalo extends JavaPlugin {
 	// methods to get init.yml
 	
 	public FileConfiguration getInit() {	// analogly to getConfig()
-		
-		if (init == null) {
-			
-			reloadInit();
-		}
 		
 		return init;
 	}
