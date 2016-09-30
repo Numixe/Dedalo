@@ -1,5 +1,6 @@
 package numixe.atlas.dedalo.entities;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Team {
@@ -42,6 +43,11 @@ public class Team {
 	public DPlayer[] getPlayers() {
 		
 		return players.values().toArray(new DPlayer[players.size()]);
+	}
+	
+	public Collection<DPlayer> getPlayerList() {
+		
+		return players.values();
 	}
 	
 	public int size() {

@@ -233,7 +233,7 @@ public class Field {
 						// assegna una zona casuale ad ogni nodo
 						
 						j.assignRandomZone();
-						j.zone.spawnBlocks(j.position);
+						j.spawnZone();
 					}
 				}
 			}
@@ -312,11 +312,15 @@ public class Field {
 	
 	public class ZoneNode {
 		
-		public Location position;
-		public Zone zone;
-		public String[] possibleZones;
-		public int[] chestsIndices;
-		public Spawn spawn;			// null if no spawn
+		public Location position;		// posizione reale del nodo
+		public Zone zone;				// la zona scelta in questione
+		public String[] possibleZones;	// i nomi delle possibili zone in questo nodo
+		public int[] chestsIndices;		// Gli indici delle chest, nell'array zone.chets
+		public Spawn spawn;			// un possibile spawn, nullo se non e' presente
+		
+		/*
+		 *  Seleziona casualmente una tra le zone possibili
+		 */
 		
 		public void assignRandomZone() {
 			
@@ -338,6 +342,10 @@ public class Field {
 			zone = Zone.loadZone(possibleZones[rand]);
 		}
 		
+		/*
+		 *  Elimina le vecchie chest e ne genera altre
+		 */
+		
 		public void spawnRandomChests(int size) {
 			
 			if (zone == null)
@@ -356,6 +364,19 @@ public class Field {
 			}
 		}
 		
+		/*
+		 *  Genera la zona nel campo
+		 */
+		
+		public void spawnZone() {
+			
+			zone.spawnBlocks(position);
+		}
+		
+		/*
+		 *  Volatilizza tutto cio' appartenente alla zona
+		 */
+		
 		public void destroyZoneNode() {
 			
 			if (zone == null)
@@ -366,6 +387,10 @@ public class Field {
 			destroyChests();
 		}
 		
+		/*
+		 *  Volatilizza le chest
+		 */
+		
 		public void destroyChests() {
 			
 			if (chestsIndices == null)
@@ -374,6 +399,10 @@ public class Field {
 			zone.destroyChests(position, chestsIndices);
 			chestsIndices = null;
 		}
+		
+		/*
+		 * Restituisce una lista di player che si trova all'interno del nodo
+		 */
 		
 		public List<DPlayer> playersInside() {
 			
@@ -396,20 +425,36 @@ public class Field {
 			return out;
 		}
 		
+		/*
+		 *  Restituisce il centro del nodo
+		 */
+		
 		public Location getCenter() {
 			
 			return zone.getCenter(position);
 		}
+		
+		/*
+		 *  Assegna uno spawn casuale, tra quelli della lista in zone
+		 */
 		
 		public void setRandomSpawn() {
 			
 			spawn = zone.randomSpawn();
 		}
 		
+		/*
+		 *  Annulla uno spawn assegnato
+		 */
+		
 		public void deleteSpawn() {
 			
 			spawn = null;
 		}
+		
+		/*
+		 *  Restituisce la posizione del proprio spawn
+		 */
 		
 		public Location spawnLocation() {
 			

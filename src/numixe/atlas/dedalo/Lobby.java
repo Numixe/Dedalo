@@ -79,13 +79,17 @@ public class Lobby {
 		
 		List<DPlayer> list = new ArrayList<DPlayer>();
 		
-		for (Team team : teams) {
-			
-			for (DPlayer pl : team.getPlayers())
-				list.add(pl);
-		}
+		for (Team team : teams)
+			list.addAll(team.getPlayerList());
 		
 		return list.toArray(new DPlayer[list.size()]);
+	}
+	
+	public static void writeLocation(Location loc) {
+		
+		/*
+		 *  Scrive la location dell'hub su init.yml
+		 */
 	}
 	
 	public static Location loadLocation() {

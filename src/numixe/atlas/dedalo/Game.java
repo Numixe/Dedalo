@@ -32,11 +32,16 @@ public class Game {
 		this.lobby = lobby;
 		running = false;
 		timeEvents = null;
-		field = null;
+		field = Field.loadField();	// carica gia' il campo, ma non generarlo
 		random = new Random();
 		
 		chestMode = true;
 		reloadTouchMode = true;
+		
+		configGameMode();
+	}
+	
+	public void configGameMode() {
 		
 		if (plugin.getConfig().contains("gamemode")) {
 			
@@ -65,16 +70,31 @@ public class Game {
 		}
 	}
 	
+	/*
+	 *  Inizia il gioco
+	 *  Da chiamare esternamente quando la lobby e' piena
+	 *  O quando viene lanciato il comando /startgame
+	 */
+	
 	public void start() {
 		
-		// configure start event
-		running = true;
-		timeEvents = new TimeEvent(180); // 3 minuti
-		field = Field.loadField();
-		Bukkit.getServer().broadcastMessage("§9Starting game");
+		if (running)
+			return;
 		
+		// field.initialize() restituisce true se e' andato tutto bene, altrimenti false
+		
+		if (field.initialize())
+			Bukkit.getServer().broadcastMessage("§7Dedalo>§9 Starting game");
+		else {
+			Bukkit.getServer().broadcastMessage("§7Dedalo>§9 Unable to start the game");
+			return;
+		}
+		
+		timeEvents = new TimeEvent(180); // 180 sec = 3 minuti
 		Bukkit.getServer().getPluginManager().registerEvents(playerEvents = new PlayerEvents(), plugin);
 		Bukkit.getServer().getPluginManager().registerEvents(reloadTouchEvents = new ReloadTouchEvents(), plugin);
+		
+		running = true;
 	}
 	
 	public boolean isRunning() {
@@ -82,15 +102,25 @@ public class Game {
 		return running;
 	}
 	
+	/*
+	 *  Termina il gioco
+	 *  Da chiamare esternamente quando il tempo e' scaduto
+	 *  O quando viene lanciato il comando /finishgame
+	 */
+	
 	public void finish() {
 		
+		if (!running)
+			return;
+		
 		// configure finish event
-		Bukkit.getServer().broadcastMessage("§9Finishing game");
-		running = false;
+		Bukkit.getServer().broadcastMessage("§7Dedalo>§9 Finishing game");
 		timeEvents.destroy();
-		field = null;
+		field.destroy();
 		
 		HandlerList.unregisterAll(playerEvents);
 		HandlerList.unregisterAll(reloadTouchEvents);
+		
+		running = false;
 	}
 }
