@@ -263,6 +263,16 @@ public class Zone {
 			plugin.getInit().createSection("zones." + zone.name + ".blocks");
 		}
 		
+		if (plugin.getInit().contains("zones." + zone.name + ".blocks." + id)) {
+			
+			int add = 0;
+			
+			while (plugin.getInit().contains("zones." + zone.name + ".blocks." + id + "alt" + add))
+				add++;
+			
+			id += "alt" + add;
+		}
+		
 		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id);
 		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id + ".location");
 		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id + ".type");
