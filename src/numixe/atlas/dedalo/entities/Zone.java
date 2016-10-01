@@ -246,7 +246,11 @@ public class Zone {
 		// write to init.yml
 		
 		BlockNode node = zone.new BlockNode(block, position);
-		int id = game.random.nextInt();
+		
+		// Il nome del blocco dipende dalla sua posizione
+		// Per una ricerca piu' efficiente all'interno di init.yml
+		
+		String id = node.getID();
 		
 		if (!plugin.getInit().contains("zones." + zone.name + ".blocks")) {
 			
@@ -465,6 +469,15 @@ public class Zone {
 		public Material getType() {
 			
 			return blockdata.getItemType();
+		}
+		
+		/*
+		 *  Returns the String id, based on the location
+		 */
+		
+		public String getID() {
+			
+			return "x" + relative.getBlockX() + "y" + relative.getBlockY() + "z" + relative.getBlockZ();
 		}
 	}
 }
