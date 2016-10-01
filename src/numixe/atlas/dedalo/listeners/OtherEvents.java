@@ -56,7 +56,20 @@ public class OtherEvents implements Listener {
 			
 			Zone tmp = new Zone("Template");
 			
-			Zone.writeBlock(tmp, tmp.new BlockNode(b, b.getLocation()));
+			if (!plugin.getInit().contains("zones." + tmp.name + ".blocks")) {
+				
+				if (!plugin.getInit().contains("zones"))
+					plugin.getInit().createSection("zones");
+				
+				if (!plugin.getInit().contains("zones." + tmp.name))
+					plugin.getInit().createSection("zones." + tmp.name);
+					
+				plugin.getInit().createSection("zones." + tmp.name + ".blocks");
+			}
+			
+			Zone.writeBlock(tmp, 
+					plugin.getInit().getConfigurationSection("zones." + tmp.name + ".blocks"), 
+					tmp.new BlockNode(b, b.getLocation()));
 			
 			p.sendMessage("Block written");
 			

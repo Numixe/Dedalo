@@ -367,7 +367,7 @@ public class Field {
 			for (int i = 0; i < size; i++) {
 				
 				chestsIndices[i] = game.random.nextInt(zone.chestsSize());	// random chest location
-				int inv = game.random.nextInt(Zone.INVENTORIES.length);	// random chest inventory
+				int inv = game.random.nextInt(Zone.INVENTORIES.size());	// random chest inventory
 				
 				zone.spawnChest(position, inv, chestsIndices[i]);
 			}
