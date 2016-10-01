@@ -56,7 +56,7 @@ public class OtherEvents implements Listener {
 			
 			Zone tmp = new Zone("Template");
 			
-			Zone.writeBlock(tmp, b, b.getLocation());
+			Zone.writeBlock(tmp, tmp.new BlockNode(b, b.getLocation()));
 			
 			p.sendMessage("Block written");
 			

@@ -68,6 +68,39 @@ public class Zone {
 	}
 	
 	/*
+	 *  Metodi di aggiunta e rimozione di blocchi
+	 */
+	
+	public void addBlock(Block block, Location position) {
+		
+		blocks.add(new BlockNode(block, position));
+	}
+	
+	public void appendBlockList(List<BlockNode> blocks) {
+		
+		this.blocks.addAll(blocks);
+	}
+	
+	public void removeBlock(Block block, Location position) {
+		
+		BlockNode node = new BlockNode(block, position);
+		
+		for (BlockNode b : blocks) {
+			
+			if (b.relative.equals(node.relative)) {
+				
+				blocks.remove(b);
+				break;
+			}
+		}
+	}
+	
+	public void clearBlocks() {
+		
+		blocks.clear();
+	}
+	
+	/*
 	 *  Aggiunge un nuovo spawn alla lista
 	 *  absolute = posizione reale dello spawn
 	 *  relative = posizione di riferimento
@@ -241,11 +274,9 @@ public class Zone {
 	 *  Posizione (relativa, non reale)
 	 */
 	
-	public static void writeBlock(Zone zone, Block block, Location position) {
+	public static void writeBlock(Zone zone, BlockNode node) {
 		
 		// write to init.yml
-		
-		BlockNode node = zone.new BlockNode(block, position);
 		
 		// Il nome del blocco dipende dalla sua posizione
 		// Per una ricerca piu' efficiente all'interno di init.yml
@@ -291,7 +322,14 @@ public class Zone {
 		
 		List<BlockNode> out = new ArrayList<BlockNode>();
 		
-		// load from init.yml
+		for (String id : plugin.getInit().getConfigurationSection("zones." + zone.name + ".blocks").getKeys(false)) {
+			
+			Vector loc = plugin.getInit().getVector("zones." + zone.name + ".blocks." + id + ".location");
+			Material mat = Material.matchMaterial(plugin.getInit().getString("zones." + zone.name + ".blocks." + id + ".type"));
+			byte data = (byte) plugin.getInit().getInt("zones." + zone.name + ".blocks." + id + ".data");
+			
+			out.add(zone.new BlockNode(loc, mat, data));
+		}
 		
 		return out;
 	}
