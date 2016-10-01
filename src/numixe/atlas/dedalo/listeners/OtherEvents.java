@@ -1,10 +1,18 @@
 package numixe.atlas.dedalo.listeners;
 
+import numixe.atlas.dedalo.entities.Zone;
+
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import static numixe.atlas.dedalo.Dedalo.*;
 
 public class OtherEvents implements Listener {
 	
@@ -34,4 +42,25 @@ public class OtherEvents implements Listener {
 	    
 	    }
 	  }
+	
+	@EventHandler
+	public void onPlayerInteract(PlayerInteractEvent e) {	
+		
+		// prova init.yml
+		
+		Player p = e.getPlayer();
+		
+		if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+			
+			Block b = e.getClickedBlock();
+			
+			Zone tmp = new Zone("Template");
+			
+			Zone.writeBlock(tmp, b, b.getLocation());
+			
+			p.sendMessage("Block written");
+			
+			plugin.saveInit();
+		}
+	}
 }

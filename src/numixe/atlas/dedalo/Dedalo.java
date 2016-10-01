@@ -82,7 +82,7 @@ public class Dedalo extends JavaPlugin {
 		
 	    try {
 	    	
-	        getInit().save(initfile);
+	        init.save(initfile);
 	        
 	    } catch (IOException ex) {
 	    	

@@ -11,7 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.Vector;
 
-import static numixe.atlas.dedalo.Dedalo.game;
+import static numixe.atlas.dedalo.Dedalo.*;
 
 public class Zone {
 	
@@ -239,13 +239,34 @@ public class Zone {
 	/*
 	 *  Scrive le informazioni di un blocco su init.yml
 	 *  Posizione (relativa, non reale)
-	 *  Materiale
-	 *  MaterialData (colore, forma, ecc...)
 	 */
 	
-	public static void writeBlock(Zone zone, BlockNode node) {
+	public static void writeBlock(Zone zone, Block block, Location position) {
 		
 		// write to init.yml
+		
+		BlockNode node = zone.new BlockNode(block, position);
+		int id = game.random.nextInt();
+		
+		if (!plugin.getInit().contains("zones." + zone.name + ".blocks")) {
+			
+			if (!plugin.getInit().contains("zones"))
+				plugin.getInit().createSection("zones");
+			
+			if (!plugin.getInit().contains("zones." + zone.name))
+				plugin.getInit().createSection("zones." + zone.name);
+				
+			plugin.getInit().createSection("zones." + zone.name + ".blocks");
+		}
+		
+		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id);
+		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id + ".location");
+		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id + ".type");
+		plugin.getInit().createSection("zones." + zone.name + ".blocks." + id + ".data");
+		
+		plugin.getInit().set("zones." + zone.name + ".blocks." + id + ".location", node.relative);
+		plugin.getInit().set("zones." + zone.name + ".blocks." + id + ".type", node.getType().toString());
+		plugin.getInit().set("zones." + zone.name + ".blocks." + id + ".data", node.getData());
 	}
 	
 	/*
