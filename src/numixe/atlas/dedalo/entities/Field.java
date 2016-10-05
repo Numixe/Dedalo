@@ -15,18 +15,62 @@ import numixe.atlas.dedalo.entities.Zone.*;
 
 public class Field {
 	
-	public ZoneNode[][] map;	// mappa bidimensionale dell'intero campo, un insieme di spazi contenenti zone
+	private ZoneNode[][] map;	// mappa bidimensionale dell'intero campo, un insieme di spazi contenenti zone
 	public HashMap<String, Vector2i> spawnCoords;		// coordinate delle zone contenenti gli spawn registrati per ciascun team
+	private int node_size;
 	
-	public static final int MIN_DISTANCE = 2;
+	public static final int DEFAULT_MIN_DISTANCE = 2;
 	public static final int DEFAULT_CHEST_SIZE = 20;
-	public static final int DEFAULT_CHEST_PER_ZONE = 6;
+	public static final int DEFAULT_MAX_CHEST_PER_ZONE = 6;
 	public static final int DEFAULT_ZONE_CHANGE = 3;
+	
+	public int min_distance;
+	public int chest_size;
+	public int max_chest_per_zone;
+	public int zone_change;
 
 	public Field() {
 		
 		spawnCoords = new HashMap<String, Vector2i>();
 		map = null;
+		node_size = 0;
+		
+		min_distance = DEFAULT_MIN_DISTANCE;
+		chest_size = DEFAULT_CHEST_SIZE;
+		max_chest_per_zone = DEFAULT_MAX_CHEST_PER_ZONE;
+		zone_change = DEFAULT_ZONE_CHANGE;
+	}
+	
+	/**
+	 * Imposta la mappa attraverso delle liste di dati ottenute
+	 * esternamente da init.yml
+	 * 
+	 * @param positions: lista delle posizioni dei vari nodi della mappa
+	 * @param zones: zone implementabili da ciascun nodo
+	 * @param indices: indici di ricerca tra le liste, la mappa verra' dimensionata in base a questo array
+	 */
+	
+	public void setMap(List<Location> positions, List<List<String>> zones, int[][] indices) {
+		
+		if (positions.size() != zones.size())
+			return;
+		
+		map = new ZoneNode[indices.length][];
+		
+		for (int i = 0; i < indices.length; i++) {
+			
+			map[i] = new ZoneNode[indices[i].length];
+			
+			for (int j = 0; j < indices[i].length; j++) {
+				
+				map[i][j] = new ZoneNode();
+				map[i][j].position = positions.get(indices[i][j]);
+				List<String> tmp = zones.get(indices[i][j]);
+				map[i][j].possibleZones = tmp.toArray(new String[tmp.size()]);
+			}
+			
+			node_size += indices[i].length;
+		}
 	}
 	
 	/*
@@ -89,13 +133,11 @@ public class Field {
 		Vector2i zc1 = randomZoneCoords();	// genera la prima zona
 		Vector2i zc2 = null;
 		
-		int max = map.length * map.length;
-		
-		for (int p = 0; p < max; p++) {
+		for (int p = 0; p < node_size; p++) {
 			
 			zc2 = randomZoneCoords();	// genera la seconda zona
 			
-			if (zc1.distance(zc2) >= MIN_DISTANCE)	// controlla che le due zone siano sufficientemente lontane
+			if (zc1.distance(zc2) >= min_distance)	// controlla che le due zone siano sufficientemente lontane
 				break;
 			
 			// se non esistono zone abbastanza lontane verra' presa l'ultima generata
@@ -133,7 +175,7 @@ public class Field {
 		
 		List<Vector2i> changed = new ArrayList<Vector2i>();		// Array di zone gia' scelte per essere sostituite, all'inizio e' vuoto
 		
-		while (changed.size() < DEFAULT_ZONE_CHANGE) {
+		for (int count = 0; changed.size() < zone_change && count < node_size; count++) {
 			
 			Vector2i coords = randomZoneCoords();	// genera una zona
 			
@@ -178,18 +220,18 @@ public class Field {
 		List<Vector2i> changed = new ArrayList<Vector2i>();		// lista delle zone scelte da cambiare
 		int csize = 0;											// numero di chest cambiate
 		
-		while (changed.size() < DEFAULT_ZONE_CHANGE && csize < DEFAULT_CHEST_SIZE) {
+		for (int count = 0; csize < chest_size && count < node_size; count++) {
 			
 			Vector2i coords = randomZoneCoords();	// genera casualmente una zona
 			
 			if (changed.contains(coords))			// verifica che non sia gia' stata scelta
 				continue;
 			
-			int addsize = game.random.nextInt(DEFAULT_CHEST_PER_ZONE);	// chest da generare in quella zona
+			int addsize = game.random.nextInt(max_chest_per_zone);	// chest da generare in quella zona
 			csize += addsize;
 			
-			if (csize > DEFAULT_CHEST_SIZE)					// se il numero e' troppo grande, calibralo
-				addsize = csize - DEFAULT_CHEST_SIZE;
+			if (csize > chest_size)					// se il numero e' troppo grande, calibralo
+				addsize = csize - chest_size;
 			
 			map[coords.x][coords.y].spawnRandomChests(addsize);		//	genera nel campo le chest
 		}
@@ -275,6 +317,9 @@ public class Field {
 	
 	public void destroy() {
 		
+		if (map == null)
+			return;
+		
 		for (ZoneNode[] i : map) {
 			
 			for (ZoneNode j : i) {
@@ -290,6 +335,12 @@ public class Field {
 			for (DPlayer p : i.getPlayers())
 				p.player.teleport(Lobby.location);	// trasporta tutti i player nella posizione nell'hub
 		}
+	}
+	
+	public void reload() {
+		
+		destroy();
+		initialize();
 	}
 	
 	/*
