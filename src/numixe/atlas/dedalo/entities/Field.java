@@ -1,11 +1,15 @@
 package numixe.atlas.dedalo.entities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.util.Vector;
 
 import static numixe.atlas.dedalo.Dedalo.*;
@@ -18,6 +22,14 @@ public class Field {
 	private ZoneNode[][] map;	// mappa bidimensionale dell'intero campo, un insieme di spazi contenenti zone
 	public HashMap<String, Vector2i> spawnCoords;		// coordinate delle zone contenenti gli spawn registrati per ciascun team
 	private int node_size;
+	
+	/*
+	 *  La ragione per cui map e' array ZoneNode[][] e non un ArrayList<List<ZoneNode>> e' che
+	 *  un array e' fisso nella struttura (dimensioni) ma piu' efficiente nella modifica dei valori
+	 *  Mentre un ArrayList e' piu' lento a modificare i valori ma rapido a modificare le dimensioni.
+	 *  map viene caricato una sola volta e durante il corso del gioco la sua struttura non viene modificata,
+	 *  di conseguenza e' piu' conveniente l'array
+	 */
 	
 	public static final int DEFAULT_MIN_DISTANCE = 2;
 	public static final int DEFAULT_CHEST_SIZE = 20;
@@ -42,38 +54,143 @@ public class Field {
 	}
 	
 	/**
-	 * Imposta la mappa attraverso delle liste di dati ottenute
-	 * esternamente da init.yml
-	 * 
-	 * @param positions: lista delle posizioni dei vari nodi della mappa
-	 * @param zones: zone implementabili da ciascun nodo
-	 * @param indices: indici di ricerca tra le liste, la mappa verra' dimensionata in base a questo array
+	 * Imposta un valore in un nodo preciso della mappa
+	 * @param indices
+	 * @param position
+	 * @param possibleZones
 	 */
 	
-	public void setMap(List<Location> positions, List<List<String>> zones, int[][] indices) {
+	public void mapSetTo(Vector2i indices, Location position, String ... possibleZones) {
 		
-		if (positions.size() != zones.size())
+		ZoneNode node;
+		
+		try {
+			
+			node = getNode(indices);
+			
+		} catch (ArrayIndexOutOfBoundsException e) {
+			
 			return;
-		
-		map = new ZoneNode[indices.length][];
-		
-		for (int i = 0; i < indices.length; i++) {
-			
-			map[i] = new ZoneNode[indices[i].length];
-			
-			for (int j = 0; j < indices[i].length; j++) {
-				
-				map[i][j] = new ZoneNode();
-				map[i][j].position = positions.get(indices[i][j]);
-				List<String> tmp = zones.get(indices[i][j]);
-				map[i][j].possibleZones = tmp.toArray(new String[tmp.size()]);
-			}
-			
-			node_size += indices[i].length;
 		}
+		
+		node.position = position;
+		node.possibleZones = possibleZones;
 	}
 	
-	/*
+	/**
+	 * Aggiunge un nodo a un indice della mappa
+	 * @param index
+	 * @param position
+	 * @param possibleZones
+	 */
+	
+	public void mapAddTo(int index, Location position, String ... possibleZones) {
+		
+		if (index >= map.length)
+			return;
+		
+		int last;
+		
+		if (map[index] == null)
+			last = 0;
+		else
+			last = map[index].length;
+		
+		ZoneNode[] copy = new ZoneNode[last + 1];	// crea un buffer piu' grande di 1
+		
+		for (int i = 0; i < last; i++) {	// copia il contenuto di map al buffer
+			
+			copy[i] = map[index][i];
+		}
+		
+		copy[last] = new ZoneNode();
+		copy[last].position = position;
+		copy[last].possibleZones = possibleZones;
+		
+		map[index] = copy;
+	}
+	
+	/**
+	 * Rimuove un nodo da un nodo preciso della mappa
+	 * @param coords
+	 */
+	
+	public void mapRemove(Vector2i coords) {
+		
+		if (coords.x >= map.length)
+			return;
+		else if (coords.y >= map[coords.x].length)
+			return;
+		
+		ZoneNode[] copy = new ZoneNode[map[coords.x].length - 1];
+		
+		int j = 0;
+		
+		for (int i = 0; i < map[coords.x].length; i++) {
+			
+			if (i == coords.y)
+				continue;
+			
+			copy[j] = map[coords.x][i];
+			j++;
+		}
+		
+		map[coords.x] = copy;
+	}
+	
+	/**
+	 * Aggiunge un indice alla mappa
+	 */
+	
+	public void mapAddIndex() {
+		
+		ZoneNode[][] copy = new ZoneNode[map.length + 1][];
+		
+		for (int i = 0; i < map.length; i++)
+			copy[i] = map[i];				// copia i pointer da un array all'altro
+		
+		copy[map.length] = null;	// assegna null al nuovo slot
+		
+		map = copy;		// assegna il nuovo array a map
+	}
+	
+	/**
+	 * Rimuove un indice dalla mappa
+	 * @param index
+	 */
+	
+	public void mapRemoveIndex(int index) {
+		
+		if (index >= map.length)
+			return;
+		
+		ZoneNode[][] copy = new ZoneNode[map.length - 1][];
+		
+		int j = 0;
+		
+		for (int i = 0; i < map.length; i++) {
+			
+			if (i == index)
+				continue;
+			
+			copy[j] = map[i];				// copia i pointer da un array all'altro
+			j++;
+		}
+		
+		map = copy;		// assegna il nuovo array a map
+	}
+	
+	/**
+	 * Restituisce un instanza della mappa
+	 * @return un pointer alla mappa
+	 */
+	
+	public final ZoneNode[][] getMap() {
+		
+		return map;
+	}
+	
+	/**
 	 *  Resituisce il nodo corrispondente alle coordinate 
 	 */
 	
@@ -82,7 +199,7 @@ public class Field {
 		return map[v.x][v.y];
 	}
 	
-	/*
+	/**
 	 *  Restituisce la posizione reale dello spawn di un team
 	 */
 	
@@ -92,7 +209,7 @@ public class Field {
 		return map[coords.x][coords.y].spawnLocation();
 	}
 	
-	/*
+	/**
 	 *  Genera casualmente due coordinate int x, y
 	 */
 	
@@ -121,7 +238,7 @@ public class Field {
 		return out;
 	}
 	
-	/*
+	/**
 	 *  Modifica le posizioni degli spawn
 	 */
 	
@@ -167,7 +284,7 @@ public class Field {
 		spawnCoords.put(teams[1].name, zc2);
 	}
 	
-	/*
+	/**
 	 *  Cambia la configurazione di un certo numero di zone
 	 */
 	
@@ -211,7 +328,7 @@ public class Field {
 		}
 	}
 	
-	/*
+	/**
 	 *  Cambia la configurazione delle chest
 	 */
 	
@@ -237,7 +354,7 @@ public class Field {
 		}
 	}
 	
-	/*
+	/**
 	 *  Riaggiorna l'intero campo
 	 *  Questa funzione viene richiamata esternamente ogni periodo di tempo
 	 *  Ovvero quando la configurazione del campo deve essere cambiata
@@ -255,7 +372,7 @@ public class Field {
 		refreshSpawns();
 	}
 	
-	/*
+	/**
 	 *  Da chiamare esternamente quando comincia il gioco
 	 *  Inizializza il campo da battaglia
 	 */
@@ -310,7 +427,7 @@ public class Field {
 		return true;
 	}
 	
-	/*
+	/**
 	 *  Da chiamare esternamente quando termina il gioco
 	 *  Finalizza il campo di battaglia e lo volatilizza
 	 */
@@ -343,15 +460,81 @@ public class Field {
 		initialize();
 	}
 	
-	/*
+	/**
+	 *  Carica la mappa
+	 */
+	
+	public void loadMap() {
+		
+		Set<String> set = plugin.getInit().getConfigurationSection("map").getKeys(false);
+		
+		node_size = 0;
+		
+		map = new ZoneNode[set.size()][];
+		
+		int i = 0;
+		
+		for (String key : set) {
+			
+			Set<String> subset = plugin.getInit().getConfigurationSection("map." + key).getKeys(false);
+			
+			map[i] = new ZoneNode[subset.size()];
+			
+			int j = 0;
+			
+			for (String subkey : subset) {
+				
+				map[i][j] = new ZoneNode();
+				Vector loc = plugin.getInit().getVector("map." + key + "." + subkey + ".position");
+				World w = Bukkit.getServer().getWorld(plugin.getInit().getString("map." + key + "." + subkey + ".world"));
+				List<String> psz = plugin.getInit().getStringList("map." + key + "." + subkey + ".possibleZones");
+				map[i][j].set(loc,  w, psz);
+				
+				j++;
+			}
+					
+			i++;
+			node_size += subset.size();
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public static void writeField(Field field) {
+		
+		plugin.getInit().set("map", null);
+		ZoneNode[][] map = field.getMap();
+		
+		for (int i = 0; i < map.length; i++) {
+			
+			plugin.getInit().createSection("map." + i);
+			
+			for (int j = 0; j < map[i].length; j++) {
+				
+				plugin.getInit().createSection("map." + i + "." + j);
+				
+				plugin.getInit().createSection("map." + i + "." + j + ".position");
+				plugin.getInit().createSection("map." + i + "." + j + ".world");
+				plugin.getInit().createSection("map." + i + "." + j + ".possibleZones");
+				
+				plugin.getInit().set("map." + i + "." + j + ".position", map[i][j].position.toVector());
+				plugin.getInit().set("map." + i + "." + j + ".world", map[i][j].position.getWorld().getName());
+				plugin.getInit().set("map." + i + "." + j + ".possibleZones", Arrays.asList(map[i][j].possibleZones));
+			}
+		}
+	}
+	
+	/**
 	 *  Carica le informazioni strutturali del campo da init.yml
 	 */
 	
 	public static Field loadField() {
 		
 		Field out = new Field();
-		
-		// load from init.yml
+		out.loadMap();
 		
 		return out;
 	}
@@ -377,6 +560,12 @@ public class Field {
 		public String[] possibleZones;	// i nomi delle possibili zone in questo nodo
 		public int[] chestsIndices;		// Gli indici delle chest, nell'array zone.chets
 		public Spawn spawn;			// un possibile spawn, nullo se non e' presente
+		
+		public void set(Vector vec, World w, List<String> psz) {
+			
+			position = vec.toLocation(w);
+			possibleZones = psz.toArray(new String[psz.size()]);
+		}
 		
 		/*
 		 *  Seleziona casualmente una tra le zone possibili
